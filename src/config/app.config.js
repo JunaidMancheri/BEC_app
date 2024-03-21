@@ -10,7 +10,7 @@ exports.loadAppConfig = async function () {
     const val = process.env[key];
     if (!val) {
       return MainLogger.warn(
-        '\nCould not load the value of ' +
+        'Could not load the value of ' +
           key +
           ' from environment, \nfalling back to default value'
       );
