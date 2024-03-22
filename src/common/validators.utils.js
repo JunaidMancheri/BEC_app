@@ -33,7 +33,6 @@ function parseError(error)  {
 
 exports.validateInputs = (validator) => {
   return (req, _, next) => {
-    console.log(req.body)
      validator.validate(req.body)
      next()
   }

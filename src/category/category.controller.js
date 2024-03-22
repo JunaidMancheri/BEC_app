@@ -18,7 +18,7 @@ exports.createCategoryController = async (req, res, next) => {
       nameSlug: generateSlug(req.body.name),
       name: req.body.name,
       isActive: true,
-      imageUrl: `/public/uploads/categories/${filename}`,
+      imageUrl: `/uploads/categories/${filename}`,
     });
   } catch (error) {
     if (error.code === 11000)
@@ -26,7 +26,7 @@ exports.createCategoryController = async (req, res, next) => {
   }
 
   await fs.promises.writeFile(
-    join('src', 'public', 'uploads', 'categories', filename),
+    join('public', 'uploads', 'categories', filename),
     req.file.buffer
   );
 

@@ -11,6 +11,7 @@ const HttpLogger = makeLogger('HTTP');
 const app = express();
 
 app.use(cors());
+
 app.use(
   morgan('dev', {
     stream: {
@@ -18,6 +19,7 @@ app.use(
     },
   })
 );
+app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
