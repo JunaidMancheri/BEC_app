@@ -3,6 +3,8 @@ const morgan = require('morgan');
 const cors = require('cors');
 const { appConfig } = require('./app.config');
 const { makeLogger, MainLogger } = require('../common/logger.config');
+const { routes } = require('../routes');
+const createError = require('http-errors');
 
 const HttpLogger = makeLogger('HTTP')
 
@@ -14,6 +16,23 @@ app.use(morgan('dev', {stream: {
 }}));
 app.use(express.json());
 app.use(express.urlencoded());
+
+app.use('/', routes);
+
+app.use(function(req, res, next) {
+  next(createError(404));
+});
+
+
+
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500).json({
+    error: {
+      status: err.status || 500,
+      error: err.message || 'Internal Server Error',
+    }
+  })
+});
 
 
 exports.startServer = async function() {
