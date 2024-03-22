@@ -1,4 +1,4 @@
-const { validatorFactory } = require("../common/validatorFactory.utils");
+const { validatorFactory } = require("../common/validators.utils");
 
 const categoryDtoSchema = {
   type: "object",

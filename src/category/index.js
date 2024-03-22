@@ -1,1 +1,5 @@
-module.exports = require('./category.controller');
+
+module.exports = {
+  ...require('./category.controller'),
+  ...require('./validators'),
+}

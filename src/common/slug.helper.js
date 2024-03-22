@@ -1,0 +1,1 @@
+exports.generateSlug = (word) => word.replace(/\s+/g, '').toLowerCase(); 

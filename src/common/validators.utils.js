@@ -4,17 +4,17 @@ const ajv = new Ajv();
 
 
 exports.validatorFactory = (schema) => {
-  const validate = ajv.compile(schema);
+  const verify = ajv.compile(schema);
 
-  const verify = (data) => {
-    const isValid = validate(data);
+  const validate = (data) => {
+    const isValid = verify(data);
     if (isValid) {
       return data;
     }
-    throw new createHttpError.BadRequest(parseError(validate.errors[0]));
+    throw new createHttpError.BadRequest(parseError(verify.errors[0]));
   };
 
-  return { schema, verify };
+  return { schema, validate};
 };
 
 
@@ -28,6 +28,14 @@ function parseError(error)  {
       return `should not contain additional properties, found ${error.params.additionalProperty}`
     default:
       return "Invalid data.";
+  }
+}
+
+exports.validateInputs = (validator) => {
+  return (req, _, next) => {
+    console.log(req.body)
+     validator.validate(req.body)
+     next()
   }
 }
 

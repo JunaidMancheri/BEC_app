@@ -1,10 +1,14 @@
 const { Schema, model } = require("mongoose");
 
 const categorySchema = new Schema({
-  name: {
+  nameSlug: {
     type: String,
     required: true,
     unique: true,
+  },
+  name: {
+    type: String,
+    required: true,
   },
   isActive : {
     type: Boolean,
