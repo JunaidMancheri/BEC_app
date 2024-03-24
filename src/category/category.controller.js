@@ -78,3 +78,11 @@ exports.updateCategory = async (req, res, next) => {
 
   return res.status(204).end();
 };
+
+
+exports.toggleStatus = async (req, res, next) => {
+  const doc = await categoryModel.findById(req.params.categoryId);
+  doc.isActive = !doc.isActive;
+  const newDoc = await doc.save();
+  res.json(respondSuccess(newDoc));
+} 

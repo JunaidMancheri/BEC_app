@@ -5,6 +5,7 @@ const {
   getCategories,
   updateCategoryDtoSchema,
   updateCategory,
+  toggleStatus,
 } = require('../category');
 const {catchAsync} = require('../common/catchAsync.utils');
 const {validateInputs} = require('../common/validators.utils');
@@ -27,5 +28,7 @@ router.put(
   validateInputs(updateCategoryDtoSchema),
   catchAsync(updateCategory)
 );
+
+router.patch('/:categoryId/toggle-status', catchAsync(toggleStatus));
 
 exports.categoryRoutes = router;
