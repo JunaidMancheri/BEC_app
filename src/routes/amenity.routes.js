@@ -1,7 +1,7 @@
 const {Router} = require('express');
 const {uploadTemporary} = require('../common/upload.helper');
 const {validateInputs} = require('../common/validators.utils');
-const {createAmenityValidator, createAmenity} = require('../amenity');
+const {createAmenityValidator, createAmenity, getAmenities} = require('../amenity');
 const {catchAsync} = require('../common/catchAsync.utils');
 
 const router = Router();
@@ -12,5 +12,7 @@ router.post(
   validateInputs(createAmenityValidator),
   catchAsync(createAmenity)
 );
+
+router.get('/', catchAsync(getAmenities));
 
 exports.amenityRoutes = router;

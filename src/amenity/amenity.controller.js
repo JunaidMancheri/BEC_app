@@ -32,3 +32,8 @@ exports.createAmenity = async (req, res, next) => {
 
   return res.json(respondSuccess(doc));
 }
+
+exports.getAmenities = async (req, res) => {
+  const amenities  = await amenityModel.find({}, '-nameSlug');
+  return res.json(respondSuccess(amenities));
+}
