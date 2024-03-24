@@ -10,4 +10,17 @@ const categoryDtoSchema = {
   additionalProperties: false,
 };
 
+
 exports.categoryDtoValidator = validatorFactory(categoryDtoSchema);
+
+
+const updateCategoryDtoSchema = {
+  type: "object",
+  properties: {
+    name: { type: "string" ,
+  },
+  },
+  additionalProperties: false,
+};
+
+exports.updateCategoryDtoSchema = validatorFactory(updateCategoryDtoSchema);

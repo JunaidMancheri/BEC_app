@@ -14,7 +14,7 @@ exports.createCategoryController = async (req, res, next) => {
   const filename = generateFilename(req.file.mimetype);
   let doc;
   try {
-   doc =  await categoryModel.create({
+    doc = await categoryModel.create({
       nameSlug: generateSlug(req.body.name),
       name: req.body.name,
       isActive: true,
@@ -38,5 +38,43 @@ exports.createCategoryController = async (req, res, next) => {
  */
 exports.getCategories = async (req, res, next) => {
   const categories = await categoryModel.find({}, '-nameSlug');
-  return res.json(respondSuccess(categories))
-}
+  return res.json(respondSuccess(categories));
+};
+
+/**
+ * @type {import("../..").ExpressController}
+ */
+exports.updateCategory = async (req, res, next) => {
+  if (req.body.name || req.file) {
+    const doc = await categoryModel.findById(req.params.categoryId);
+    if (req.body.name) {
+      doc.name = req.body.name;
+      doc.nameSlug = generateSlug(req.body.name);
+    }
+    let oldfile = doc.imageUrl.split('/')[3];
+    const filename = generateFilename(req.file.mimetype);
+    if (req.file) {
+      doc.imageUrl = `/uploads/catgories/${filename}`;
+    }
+
+    try {
+      const response = await doc.save({new: true});
+      await fs.promises.unlink(
+        join('public', 'uploads', 'categories', oldfile)
+      );
+      await fs.promises.writeFile(
+        join('public', 'uploads', 'categories', filename),
+        req.file.buffer
+      );
+
+      return res.json(respondSuccess(response));
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new Conflict('Category name is already in use');
+      }
+      throw error;
+    }
+  }
+
+  return res.status(204).end();
+};
