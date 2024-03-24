@@ -2,14 +2,14 @@ const {respondSuccess} = require('../common/response.helper');
 const {generateFilename} = require('../common/upload.helper');
 const {generateSlug} = require('../common/slug.helper');
 const {categoryModel} = require('./category.model');
-const {Conflict} = require('http-errors');
+const {Conflict, BadRequest} = require('http-errors');
 const {join} = require('path');
 const fs = require('fs');
 /**
  * @type {import("../..").ExpressController}
  */
 exports.createCategoryController = async (req, res, next) => {
-  if (!req.file) throw new createHttpError.BadRequest('image is required');
+  if (!req.file) throw new BadRequest('image is required');
 
   const filename = generateFilename(req.file.mimetype);
   let doc;
