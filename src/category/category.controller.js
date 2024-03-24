@@ -52,21 +52,23 @@ exports.updateCategory = async (req, res, next) => {
       doc.nameSlug = generateSlug(req.body.name);
     }
     let oldfile = doc.imageUrl.split('/')[3];
-    const filename = generateFilename(req.file.mimetype);
+    let filename ;
     if (req.file) {
+      filename = generateFilename(req.file.mimetype);
       doc.imageUrl = `/uploads/catgories/${filename}`;
     }
 
     try {
       const response = await doc.save({new: true});
-      await fs.promises.unlink(
-        join('public', 'uploads', 'categories', oldfile)
-      );
-      await fs.promises.writeFile(
-        join('public', 'uploads', 'categories', filename),
-        req.file.buffer
-      );
-
+      if (req.file) {
+        await fs.promises.unlink(
+          join('public', 'uploads', 'categories', oldfile)
+        );
+        await fs.promises.writeFile(
+          join('public', 'uploads', 'categories', filename),
+          req.file.buffer
+        );
+      }
       return res.json(respondSuccess(response));
     } catch (error) {
       if (error.code === 11000) {

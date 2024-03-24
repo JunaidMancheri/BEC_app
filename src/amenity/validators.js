@@ -14,7 +14,7 @@ const createAmenityDtoSchema = {
 exports.createAmenityValidator = validatorFactory(createAmenityDtoSchema);
 
 
-const updateCategoryDtoSchema = {
+const updateAmenityDtoSchema = {
   type: "object",
   properties: {
     name: { type: "string" ,
@@ -23,4 +23,4 @@ const updateCategoryDtoSchema = {
   additionalProperties: false,
 };
 
-exports.updateCategoryDtoSchema = validatorFactory(updateCategoryDtoSchema);
+exports.updateAmenityValidator = validatorFactory(updateAmenityDtoSchema);
