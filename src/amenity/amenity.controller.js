@@ -74,3 +74,8 @@ exports.updateAmenity = async (req, res) => {
 
   return res.status(204).end();
 };
+
+exports.deleteAmenity = async (req, res, next) => {
+  await amenityModel.findByIdAndDelete(req.params.amenityId);
+  res.status(204).end();
+}

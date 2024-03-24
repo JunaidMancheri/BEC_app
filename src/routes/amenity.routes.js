@@ -7,6 +7,7 @@ const {
   getAmenities,
   updateAmenity,
   updateAmenityValidator,
+  deleteAmenity,
 } = require('../amenity');
 const {catchAsync} = require('../common/catchAsync.utils');
 
@@ -27,5 +28,7 @@ router.put(
   validateInputs(updateAmenityValidator),
   catchAsync(updateAmenity)
 );
+
+router.delete('/:amenityId', catchAsync(deleteAmenity));
 
 exports.amenityRoutes = router;
