@@ -1,10 +1,10 @@
-const createHttpError = require('http-errors');
-const {categoryModel} = require('./category.model');
 const {respondSuccess} = require('../common/response.helper');
-const fs = require('fs');
-const {join} = require('path');
 const {generateFilename} = require('../common/upload.helper');
 const {generateSlug} = require('../common/slug.helper');
+const {categoryModel} = require('./category.model');
+const {Conflict} = require('http-errors');
+const {join} = require('path');
+const fs = require('fs');
 /**
  * @type {import("../..").ExpressController}
  */
@@ -22,7 +22,7 @@ exports.createCategoryController = async (req, res, next) => {
     });
   } catch (error) {
     if (error.code === 11000)
-      throw new createHttpError.Conflict('category name already exists');
+      throw new Conflict('category name already exists');
   }
 
   await fs.promises.writeFile(
@@ -32,3 +32,11 @@ exports.createCategoryController = async (req, res, next) => {
 
   return res.json(respondSuccess(doc));
 };
+
+/**
+ * @type {import("../..").ExpressController}
+ */
+exports.getCategories = async (req, res, next) => {
+  const categories = await categoryModel.find({}, '-nameSlug');
+  return res.json(respondSuccess(categories))
+}

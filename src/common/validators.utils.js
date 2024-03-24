@@ -1,5 +1,5 @@
 const Ajv = require('ajv');
-const createHttpError = require('http-errors');
+const {BadRequest} = require('http-errors');
 const ajv = new Ajv();
 
 
@@ -11,7 +11,7 @@ exports.validatorFactory = (schema) => {
     if (isValid) {
       return data;
     }
-    throw new createHttpError.BadRequest(parseError(verify.errors[0]));
+    throw new BadRequest(parseError(verify.errors[0]));
   };
 
   return { schema, validate};
