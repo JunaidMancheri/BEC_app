@@ -8,15 +8,25 @@ const FILE_TYPE_MAP = {
 };
 
 exports.generateFilename = mimetype => `${v4()}.${FILE_TYPE_MAP[mimetype]}`;
+exports.generatePdfFilename = () => `${v4()}.pdf`;
+
 
 exports.uploadTemporary = multer({
   storage: multer.memoryStorage(),
   fileFilter: (req, file, cb) => {
-    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-    if (allowedMimeTypes.includes(file.mimetype)) {
-      cb(null, true);
+    if (file.fieldname == 'pdfFile') {
+        if(file.mimetype == 'application/pdf') {
+          cb(null,true);
+        } else {
+          cb(new Error('Only pdf files are allowed in the pdfFile field'));
+        }
     } else {
-      cb(new Error('Invalid file type. Only JPEG, PNG and JPG images are allowed.'));
+      const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/jpg' ];
+      if (allowedMimeTypes.includes(file.mimetype)) {
+        cb(null, true);
+      } else {
+        cb(new Error('Invalid file type. Only JPEG, PNG and JPG images are allowed.'));
+      }
     }
   },
 })
