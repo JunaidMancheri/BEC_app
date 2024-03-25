@@ -38,7 +38,10 @@ exports.createPost = async (req, res, next) => {
   const gallery = [];
   req.files['gallery'].forEach(file => {
     const filename = generateFilename(file.mimetype);
-    fs.promises.writeFile(join('public', 'uploads', 'posts', filename), file.buffer);
+    fs.promises.writeFile(
+      join('public', 'uploads', 'posts', filename),
+      file.buffer
+    );
     gallery.push(`/uploads/posts/${filename}`);
   });
 
@@ -57,3 +60,32 @@ exports.createPost = async (req, res, next) => {
 
   res.status(201).json(respondSuccess(doc));
 };
+
+exports.getAllPosts = async (req, res, next) => {
+  const posts = await PostModel.find();
+  return res.json(respondSuccess(posts));
+};
+
+exports.getPostsOfACategory = async (req, res, next) => {
+  const posts = await PostModel.find({
+    category: req.params.categoryId,
+    isActive: true,
+    isCategoryActive: true,
+  });
+  return res.json(respondSuccess(posts));
+};
+
+exports.getSinglePost = async (req, res, next) => {
+  const post = await PostModel.findById(req.params.postId, {
+    isActive: true,
+    isCategoryActive: true,
+  });
+  return res.json(respondSuccess(post));
+};
+
+
+exports.updatePost = async (req, res, next) => {
+  
+}
+
+

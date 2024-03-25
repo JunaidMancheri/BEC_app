@@ -14,3 +14,17 @@ const createPostDtoSchema = {
 };
 
 exports.createPostValidator = validatorFactory(createPostDtoSchema);
+
+
+const updatePostDtoSchema = {
+  type: 'object',
+  properties: {
+    title: {type: 'string'},
+    description: {type: 'string'},
+    category: {type: 'string'},
+    contactNumber: {type: 'string'},
+    amenities: {type: 'array', items: {type: 'string'}},
+  },
+  required: [],
+  additionalProperties: false,
+};

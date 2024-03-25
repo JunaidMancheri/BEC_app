@@ -1,6 +1,6 @@
 const {Router} = require('express');
 const {catchAsync} = require('../common/catchAsync.utils');
-const {createPost} = require('../post/post.controller');
+const {createPost, getAllPosts, getPostsOfACategory, getSinglePost} = require('../post/post.controller');
 const {uploadTemporary} = require('../common/upload.helper');
 const { validateInputs } = require('../common/validators.utils');
 const { createPostValidator } = require('../post');
@@ -20,5 +20,11 @@ router.post(
   validateInputs(createPostValidator),
   catchAsync(createPost)
 );
+
+router.get('/', catchAsync(getAllPosts));
+router.get('/category/:categoryId', catchAsync(getPostsOfACategory));
+router.get('/:postId', catchAsync(getSinglePost));
+
+
 
 exports.postRoutes = router;
