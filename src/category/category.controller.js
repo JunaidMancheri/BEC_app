@@ -5,6 +5,7 @@ const {categoryModel} = require('./category.model');
 const {Conflict, BadRequest} = require('http-errors');
 const {join} = require('path');
 const fs = require('fs');
+const { EventEmitter } = require('../common/EventEmitter');
 /**
  * @type {import("../..").ExpressController}
  */
@@ -86,5 +87,6 @@ exports.toggleStatus = async (req, res, next) => {
   const doc = await categoryModel.findById(req.params.categoryId);
   doc.isActive = !doc.isActive;
   const newDoc = await doc.save();
+  EventEmitter.emit('Category:StatusChanged', { categoryId: newDoc._id, status: newDoc.isActive})
   res.json(respondSuccess(newDoc));
 } 
