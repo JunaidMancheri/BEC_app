@@ -129,7 +129,6 @@ exports.addPostGalleryImages = async (req, res, next) => {
     );
   }
 
-
   const gallery = [];
   req.files.forEach(file => {
     const filename = generateFilename(file.mimetype);
@@ -141,34 +140,41 @@ exports.addPostGalleryImages = async (req, res, next) => {
   });
 
   postDoc.gallery = [...postDoc.gallery, ...gallery];
-  const newPostDoc = await postDoc.save({new : true});
+  const newPostDoc = await postDoc.save({new: true});
   return res.json(respondSuccess(newPostDoc));
 };
 
-
 exports.deleteGalleryImage = async (req, res, next) => {
   const postDoc = await PostModel.findById(req.params.postId);
-  postDoc.gallery.splice(Number(req.params.index), 1);
+  const url = postDoc.gallery.splice(Number(req.params.index), 1);
+  fs.promises.unlink(join('public', url));
   await postDoc.save();
   res.status(204).end();
-}
+};
 
 exports.addBrochure = async (req, res, next) => {
-   if (!req.file) throw new BadRequest('brochureFile is required'); 
-   const postDoc = await PostModel.findById(req.params.postId);
-   if (postDoc.brochureUrl) {
+  if (!req.file) throw new BadRequest('brochureFile is required');
+  const postDoc = await PostModel.findById(req.params.postId);
+  if (postDoc.brochureUrl) {
     throw new Conflict('A brochure has already been added');
-   }
+  }
+  const pdfFilename = generatePdfFilename();
+  fs.promises.writeFile(
+    join('public', 'uploads', 'pdf', pdfFilename),
+    req.file.buffer
+  );
+  postDoc.brochureUrl = `/uploads/pdf/${pdfFilename}`;
+  await postDoc.save();
+  res.status(201).end();
+};
 
-    const  pdfFilename = generatePdfFilename();
-     fs.promises.writeFile(
-       join('public', 'uploads', 'pdf', pdfFilename),
-       req.file.buffer
-     );
 
-     postDoc.brochureUrl = `/uploads/pdf/${pdfFilename}`
-     
-     await postDoc.save();
-
-     res.status(201).end();
+exports.deleteBrochure = async (req, res, next) => {
+  const postDoc = await PostModel.findById(req.params.postId);
+  if (postDoc.brochureUrl) {
+    fs.promises.unlink(join('public', postDoc.brochureUrl));
+    postDoc.brochureUrl = undefined;
+    await postDoc.save();
+  }
+  res.status(204).end();
 }

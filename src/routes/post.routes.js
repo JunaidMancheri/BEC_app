@@ -9,6 +9,7 @@ const {
   addPostGalleryImages,
   deleteGalleryImage,
   addBrochure,
+  deleteBrochure,
 } = require('../post/post.controller');
 const {uploadTemporary} = require('../common/upload.helper');
 const {validateInputs} = require('../common/validators.utils');
@@ -43,5 +44,6 @@ router.post(
   uploadTemporary.single('brochureFile'),
   catchAsync(addBrochure)
 );
-
+ 
+router.delete('/:postId/brochure', catchAsync(deleteBrochure));
 exports.postRoutes = router;
