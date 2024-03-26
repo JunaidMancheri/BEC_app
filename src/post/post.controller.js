@@ -193,3 +193,11 @@ exports.updateCoverImage = async (req, res, next) => {
   await postDoc.save();
   res.status(200).end();
 }
+
+
+exports.toggleStatus = async (req, res, next) => {
+  const postDoc = await PostModel.findById(req.params.id);
+  postDoc.isActive = !postDoc.isActive;
+  await postDoc.save();
+  res.end();
+}
