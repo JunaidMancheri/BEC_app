@@ -63,7 +63,9 @@ exports.createPost = async (req, res) => {
 };
 
 exports.getAllPosts = async (req, res, next) => {
-  const posts = await PostModel.find();
+  const posts = await PostModel.find()
+    .populate('amenities')
+    .populate('courses');
   return res.json(respondSuccess(posts));
 };
 
@@ -72,15 +74,28 @@ exports.getPostsOfACategory = async (req, res, next) => {
     category: req.params.categoryId,
     isActive: true,
     isCategoryActive: true,
-  });
+  })
+    .populate('amenities')
+    .populate('courses');
   return res.json(respondSuccess(posts));
+};
+
+exports.getCoursesOfAPost = async (req, res) => {
+  const post = await PostModel.findById(
+    req.params.postId,
+    '-_id courses'
+  ).populate('courses');
+
+  return res.json(respondSuccess(post.courses));
 };
 
 exports.getSinglePost = async (req, res, next) => {
   const post = await PostModel.findById(req.params.postId, {
     isActive: true,
     isCategoryActive: true,
-  });
+  })
+    .populate('amenities')
+    .populate('courses');
   return res.json(respondSuccess(post));
 };
 
@@ -173,7 +188,6 @@ exports.addBrochure = async (req, res, next) => {
   res.status(201).end();
 };
 
-
 exports.deleteBrochure = async (req, res, next) => {
   const postDoc = await PostModel.findById(req.params.postId);
   if (postDoc.brochureUrl) {
@@ -182,33 +196,33 @@ exports.deleteBrochure = async (req, res, next) => {
     await postDoc.save();
   }
   res.status(204).end();
-}
-
+};
 
 exports.updateCoverImage = async (req, res, next) => {
   if (!req.file) {
-      throw new BadRequest('coverImage is required');
+    throw new BadRequest('coverImage is required');
   }
 
-  const postDoc = await  PostModel.findById(req.params.postId, '-_id coverImageUrl');
+  const postDoc = await PostModel.findById(
+    req.params.postId,
+    '-_id coverImageUrl'
+  );
   const filename = generateFilename(req.file.mimetype);
   const fileUrl = `/uploads/posts/${filename}`;
   await fs.promises.writeFile(join('public', fileUrl), req.file.buffer);
   fs.promises.unlink(join('public', postDoc.coverImageUrl));
   await postDoc.save();
   res.status(200).end();
-}
-
+};
 
 exports.toggleStatus = async (req, res, next) => {
   const postDoc = await PostModel.findById(req.params.id);
   postDoc.isActive = !postDoc.isActive;
   await postDoc.save();
   res.end();
-}
-
+};
 
 exports.deletePost = async (req, res, next) => {
   await PostModel.findByIdAndDelete(req.params.id);
   res.status(204).end();
-}
+};

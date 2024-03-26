@@ -13,6 +13,7 @@ const {
   updateCoverImage,
   toggleStatus,
   deletePost,
+  getCoursesOfAPost,
 } = require('../post/post.controller');
 const {uploadTemporary} = require('../common/upload.helper');
 const {validateInputs} = require('../common/validators.utils');
@@ -36,6 +37,7 @@ router.post(
 
 router.get('/', catchAsync(getAllPosts));
 router.get('/category/:categoryId', catchAsync(getPostsOfACategory));
+router.get('/:postId/courses', catchAsync(getCoursesOfAPost));
 router.get('/:postId', catchAsync(getSinglePost));
 
 router.put('/:postId/details', catchAsync(updatePostDetails));
