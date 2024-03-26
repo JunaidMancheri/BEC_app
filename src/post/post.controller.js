@@ -178,3 +178,18 @@ exports.deleteBrochure = async (req, res, next) => {
   }
   res.status(204).end();
 }
+
+
+exports.updateCoverImage = async (req, res, next) => {
+  if (!req.file) {
+      throw new BadRequest('coverImage is required');
+  }
+
+  const postDoc = await  PostModel.findById(req.params.postId, '-_id coverImageUrl');
+  const filename = generateFilename(req.file.mimetype);
+  const fileUrl = `/uploads/posts/${filename}`;
+  await fs.promises.writeFile(join('public', fileUrl), req.file.buffer);
+  fs.promises.unlink(join('public', postDoc.coverImageUrl));
+  await postDoc.save();
+  res.status(200).end();
+}
