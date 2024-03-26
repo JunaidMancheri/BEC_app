@@ -5,6 +5,7 @@ const {Conflict, BadRequest} = require('http-errors');
 const {join} = require('path');
 const fs = require('fs');
 const {amenityModel} = require('./amenity.model');
+const {EventEmitter} = require('../common/EventEmitter');
 
 /**
  * @type {import("../..").ExpressController}
@@ -77,5 +78,6 @@ exports.updateAmenity = async (req, res) => {
 
 exports.deleteAmenity = async (req, res, next) => {
   await amenityModel.findByIdAndDelete(req.params.amenityId);
+  EventEmitter.emit('Amenity:Deleted', {amenityId: req.params.amenityId});
   res.status(204).end();
-}
+};
