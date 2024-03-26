@@ -28,3 +28,5 @@ const updatePostDtoSchema = {
   required: [],
   additionalProperties: false,
 };
+
+exports.updatePostValidator - validatorFactory(updatePostDtoSchema);

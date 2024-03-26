@@ -43,7 +43,7 @@ const postSchema = new Schema({
     type: Number,
     required: true,
   },
-  pdfFileUrl: String,
+  brochureUrl: String,
 });
 
 

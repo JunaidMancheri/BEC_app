@@ -14,7 +14,7 @@ exports.generatePdfFilename = () => `${v4()}.pdf`;
 exports.uploadTemporary = multer({
   storage: multer.memoryStorage(),
   fileFilter: (req, file, cb) => {
-    if (file.fieldname == 'pdfFile') {
+    if (file.fieldname == 'brochureFile') {
         if(file.mimetype == 'application/pdf') {
           cb(null,true);
         } else {

@@ -1,4 +1,4 @@
-const {BadRequest} = require('http-errors');
+const {BadRequest, Conflict} = require('http-errors');
 const {PostModel} = require('./post.model');
 const {getCategoryStatus} = require('../category');
 const {
@@ -21,11 +21,11 @@ exports.createPost = async (req, res, next) => {
     throw new BadRequest('gallery images can be only upto 4 images');
 
   let pdfFilename;
-  if (req.files['pdfFile']) {
+  if (req.files['brochureFile']) {
     pdfFilename = generatePdfFilename();
     fs.promises.writeFile(
       join('public', 'uploads', 'pdf', pdfFilename),
-      req.files['pdfFile'][0].buffer
+      req.files['brochureFile'][0].buffer
     );
   }
 
@@ -55,7 +55,7 @@ exports.createPost = async (req, res, next) => {
     contactNumber: req.body['contactNumber'],
     coverImageUrl: `/uploads/posts/${coverImageName}`,
     isCategoryActive: await getCategoryStatus(req.body['category']),
-    pdfFileUrl: pdfFilename ? `/uploads/pdf/${pdfFilename}` : undefined,
+    brochureUrl: pdfFilename ? `/uploads/pdf/${pdfFilename}` : undefined,
   });
 
   res.status(201).json(respondSuccess(doc));
@@ -83,9 +83,92 @@ exports.getSinglePost = async (req, res, next) => {
   return res.json(respondSuccess(post));
 };
 
+exports.updatePostDetails = async (req, res, next) => {
+  if (Object.keys(req.body).length === 0) {
+    return res.status(204).end();
+  }
+  const updates = {};
+  if (req.body.title) {
+    updates.title = req.body.title;
+  }
 
-exports.updatePost = async (req, res, next) => {
-  
+  if (req.body.description) {
+    updates.description = req.body.description;
+  }
+
+  if (req.body.contactNumber) {
+    updates.contactNumber = req.body.contactNumber;
+  }
+
+  if (req.body.amenities) {
+    updates.amenities = req.body.amenities;
+  }
+
+  if (req.body.category) {
+    updates.category = req.body.category;
+  }
+
+  const doc = await PostModel.findByIdAndUpdate(req.params.postId, updates);
+  return res.json(respondSuccess(doc));
+};
+
+exports.addPostGalleryImages = async (req, res, next) => {
+  if (!req.files) {
+    return res.status(204).end();
+  }
+
+  if (!req.files.length > 4) {
+    throw new BadRequest('Gallery can contain only up to 4 images');
+  }
+
+  const postDoc = await PostModel.findById(req.params.postId, '-_id gallery');
+
+  if (postDoc.gallery.length + req.files.length > 4) {
+    throw new BadRequest(
+      `Can't add ${req.files.length} more images, since gallery already contains ${postDoc.gallery.lenght} images and a maximum number of 4 images are only allowed`
+    );
+  }
+
+
+  const gallery = [];
+  req.files.forEach(file => {
+    const filename = generateFilename(file.mimetype);
+    fs.promises.writeFile(
+      join('public', 'uploads', 'posts', filename),
+      file.buffer
+    );
+    gallery.push(`/uploads/posts/${filename}`);
+  });
+
+  postDoc.gallery = [...postDoc.gallery, ...gallery];
+  const newPostDoc = await postDoc.save({new : true});
+  return res.json(respondSuccess(newPostDoc));
+};
+
+
+exports.deleteGalleryImage = async (req, res, next) => {
+  const postDoc = await PostModel.findById(req.params.postId);
+  postDoc.gallery.splice(Number(req.params.index), 1);
+  await postDoc.save();
+  res.status(204).end();
 }
 
+exports.addBrochure = async (req, res, next) => {
+   if (!req.file) throw new BadRequest('brochureFile is required'); 
+   const postDoc = await PostModel.findById(req.params.postId);
+   if (postDoc.brochureUrl) {
+    throw new Conflict('A brochure has already been added');
+   }
 
+    const  pdfFilename = generatePdfFilename();
+     fs.promises.writeFile(
+       join('public', 'uploads', 'pdf', pdfFilename),
+       req.file.buffer
+     );
+
+     postDoc.brochureUrl = `/uploads/pdf/${pdfFilename}`
+     
+     await postDoc.save();
+
+     res.status(201).end();
+}
