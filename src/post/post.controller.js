@@ -12,7 +12,7 @@ const {respondSuccess} = require('../common/response.helper');
 /**
  * @type {import("../..").ExpressController}
  */
-exports.createPost = async (req, res, next) => {
+exports.createPost = async (req, res) => {
   if (!req.files) throw new BadRequest('Images are required');
   if (!req.files['coverImage']) throw new BadRequest('coverImage is required');
   if (!req.files['gallery'])
@@ -49,6 +49,7 @@ exports.createPost = async (req, res, next) => {
     gallery,
     isActive: true,
     title: req.body['title'],
+    courses: req.body['courses'],
     category: req.body['category'],
     amenities: req.body['amenities'],
     description: req.body['description'],
@@ -102,6 +103,10 @@ exports.updatePostDetails = async (req, res, next) => {
 
   if (req.body.amenities) {
     updates.amenities = req.body.amenities;
+  }
+
+  if (req.body.courses) {
+    updates.courses = req.body.courses;
   }
 
   if (req.body.category) {

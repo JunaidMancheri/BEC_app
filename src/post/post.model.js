@@ -28,6 +28,9 @@ const postSchema = new Schema({
   amenities: {
     type: [{type: Schema.Types.ObjectId, ref: 'amenities'}],
   },
+  courses: {
+    type: [{type: Schema.Types.ObjectId, ref: 'courses'}],
+  },
   gallery: [
     {
       type: String,

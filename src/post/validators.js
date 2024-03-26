@@ -8,8 +8,9 @@ const createPostDtoSchema = {
     category: {type: 'string'},
     contactNumber: {type: 'string'},
     amenities: {type: 'array', items: {type: 'string'}},
+    courses: {type: 'array', items: {type: 'string'}},
   },
-  required: ['title', 'description', 'contactNumber', 'category'],
+  required: ['title', 'description', 'contactNumber', 'category', 'courses'],
   additionalProperties: false,
 };
 
@@ -24,9 +25,9 @@ const updatePostDtoSchema = {
     category: {type: 'string'},
     contactNumber: {type: 'string'},
     amenities: {type: 'array', items: {type: 'string'}},
+    courses: {type: 'array', items: {type: 'string'}},
   },
-  required: [],
   additionalProperties: false,
 };
 
-exports.updatePostValidator - validatorFactory(updatePostDtoSchema);
+exports.updatePostValidator = validatorFactory(updatePostDtoSchema);
