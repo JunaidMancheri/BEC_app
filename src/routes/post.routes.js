@@ -12,6 +12,7 @@ const {
   deleteBrochure,
   updateCoverImage,
   toggleStatus,
+  deletePost,
 } = require('../post/post.controller');
 const {uploadTemporary} = require('../common/upload.helper');
 const {validateInputs} = require('../common/validators.utils');
@@ -52,4 +53,6 @@ router.delete('/:postId/brochure', catchAsync(deleteBrochure));
 router.put('/:postId/coverImage', uploadTemporary.single('coverImage'), catchAsync(updateCoverImage));
 
 router.patch('/:postId/toggle-status', catchAsync(toggleStatus));
+
+router.delete('/:postId', catchAsync(deletePost));
 exports.postRoutes = router;

@@ -201,3 +201,9 @@ exports.toggleStatus = async (req, res, next) => {
   await postDoc.save();
   res.end();
 }
+
+
+exports.deletePost = async (req, res, next) => {
+  await PostModel.findByIdAndDelete(req.params.id);
+  res.status(204).end();
+}
