@@ -12,3 +12,15 @@ const createBannerDtoSchema = {
 };
 
 exports.createBannerValidator = validatorFactory(createBannerDtoSchema);
+
+const updateBannerDtoSchema = {
+  type: 'object',
+  properties: {
+    title: {type: 'string'},
+    description: {type: 'string'},
+    link: {type: 'string'},
+  },
+  additionalProperties: false,
+};
+
+exports.updateBannerValidator = validatorFactory(updateBannerDtoSchema);

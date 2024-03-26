@@ -16,6 +16,10 @@ const bannerSchema = new Schema({
   link: {
     type: String,
     required: true,
+  },
+  isActive: {
+    type: Boolean, 
+    default: true,
   }
 })
 
