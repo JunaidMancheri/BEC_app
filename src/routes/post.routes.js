@@ -25,7 +25,7 @@ const router = Router();
 
 router.post(
   '/',
-  adminRouteGuard,
+  // adminRouteGuard,
   uploadTemporary.fields([
     {
       name: 'brochureFile',

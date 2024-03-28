@@ -1,7 +1,7 @@
 const {respondSuccess} = require('../common/response.helper');
 const {sendInvitationMail} = require('./email.service');
 const {AdminModel} = require('./model');
-const {generateAndStoreToken, validateToken} = require('../auth/token.service');
+const {generateAndStoreToken} = require('../auth/token.service');
 const {Conflict} = require('http-errors');
 const { addToBlockList, removeFromBlockList } = require('../auth');
 

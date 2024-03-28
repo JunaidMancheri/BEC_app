@@ -5,7 +5,7 @@ const courseSchema = new Schema({
   nameSlug : {type: String, required: true, unique: true},
   description: {type: String, required: true},
   duration: {type: Number, required: true},
-  type: {type: String, enum: ['undergraduate, postgraduate'], required: true},
+  type: {type: String, enum: ['undergraduate', 'postgraduate'], required: true},
 });
 
 

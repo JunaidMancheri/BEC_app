@@ -11,6 +11,7 @@ const {
   updatePasswordValidator,
   changePassword,
   checkIfInvitationTokenValid,
+  validateResetPasswordToken,
   adminRouteGuard,
 } = require('../auth');
 const {catchAsync} = require('../common/catchAsync.utils');

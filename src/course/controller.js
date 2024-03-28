@@ -3,6 +3,7 @@ const {respondSuccess} = require('../common/response.helper');
 const {generateSlug} = require('../common/slug.helper');
 const {CourseModel} = require('./model');
 const {Conflict} = require('http-errors');
+const {Types} = require('mongoose');
 
 exports.createCourse = async (req, res) => {
   let doc;
@@ -67,38 +68,31 @@ exports.getCourseAndProvidingColleges = async (req, res) => {
   const pipeline = [
     {
       $match: { 
-        _id: req.params.courseId
+        _id: new Types.ObjectId(req.params.courseId)
       }
     },
     {
       $lookup: { 
         from: 'posts',
-        localField: 'courses',
+        localField: '_id',
+        foreignField: 'courses',
         as: 'colleges'
     },
   },
     {
-      $unwind: '$colleges'
-    },
-    {
-      $lookup: {
-        from: 'courses',
-        localField: '_id',
-        foreignField: '_id',
-        as: 'courseDetails'
-      }
-    },
-    {
-      $unwind: '$courseDetails' 
-    },
-    {
       $project: {
-        _id: 0,
-        courseDetails: 1,
-        colleges: 1
+        name: 1,
+        duration: 1,
+        description: 1,
+        type: 1,
+        colleges: {
+          _id: 1,
+          title: 1,
+          coverImageUrl: 1,
+        }
       }
     }
   ];
   const result = await CourseModel.aggregate(pipeline);
-  res.json(respondSuccess(result));
+  res.json(respondSuccess(result[0]));
 }

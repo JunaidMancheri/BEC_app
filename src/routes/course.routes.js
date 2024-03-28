@@ -16,7 +16,7 @@ const router = Router();
 
 router.post(
   '/',
-  adminRouteGuard,
+  // adminRouteGuard,
   validateInputs(createCourseValidator),
   catchAsync(createCourse)
 );
