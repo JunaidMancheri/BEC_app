@@ -1,8 +1,9 @@
 const {respondSuccess} = require('../common/response.helper');
+const { sendMailToUser, sendMailToAdmins } = require('./email.service');
 const {EnquiryModel} = require('./model');
 
 exports.createEnquiry = async (req, res) => {
-  await EnquiryModel.create({
+  const data = await EnquiryModel.create({
     name: req.body.name,
     city: req.body.city,
     email: req.body.email,
@@ -12,6 +13,8 @@ exports.createEnquiry = async (req, res) => {
     post: req.body.post,
     type: req.body.post ? 'specialized' : 'general',
   });
+  sendMailToUser(data,req.body.email);
+  sendMailToAdmins(data)
   res.end();
 };
 
