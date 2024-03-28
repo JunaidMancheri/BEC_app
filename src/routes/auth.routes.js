@@ -11,6 +11,7 @@ const {
   updatePasswordValidator,
   changePassword,
   checkIfInvitationTokenValid,
+  adminRouteGuard,
 } = require('../auth');
 const {catchAsync} = require('../common/catchAsync.utils');
 
@@ -52,6 +53,7 @@ router.post(
 
 router.put(
   '/change-password',
+  adminRouteGuard,
   validateInputs(updatePasswordValidator),
   catchAsync(changePassword)
 );

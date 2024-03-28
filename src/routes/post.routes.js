@@ -18,11 +18,13 @@ const {
 const {uploadTemporary} = require('../common/upload.helper');
 const {validateInputs} = require('../common/validators.utils');
 const {createPostValidator} = require('../post');
+const {adminRouteGuard, populateUserDetails} = require('../auth');
 
 const router = Router();
 
 router.post(
   '/',
+  adminRouteGuard,
   uploadTemporary.fields([
     {
       name: 'brochureFile',
@@ -35,26 +37,44 @@ router.post(
   catchAsync(createPost)
 );
 
-router.get('/', catchAsync(getAllPosts));
+router.get('/', populateUserDetails, catchAsync(getAllPosts));
 router.get('/category/:categoryId', catchAsync(getPostsOfACategory));
 router.get('/:postId/courses', catchAsync(getCoursesOfAPost));
-router.get('/:postId', catchAsync(getSinglePost));
+router.get('/:postId', populateUserDetails, catchAsync(getSinglePost));
 
-router.put('/:postId/details', catchAsync(updatePostDetails));
-router.post('/:postId/gallery', catchAsync(addPostGalleryImages));
-router.delete('/:postId/gallery/:index', catchAsync(deleteGalleryImage));
+router.put('/:postId/details', adminRouteGuard, catchAsync(updatePostDetails));
+router.post(
+  '/:postId/gallery',
+  adminRouteGuard,
+  catchAsync(addPostGalleryImages)
+);
+router.delete(
+  '/:postId/gallery/:index',
+  adminRouteGuard,
+  catchAsync(deleteGalleryImage)
+);
 
 router.post(
   '/:postId/brochure',
+  adminRouteGuard,
   uploadTemporary.single('brochureFile'),
   catchAsync(addBrochure)
 );
- 
-router.delete('/:postId/brochure', catchAsync(deleteBrochure));
 
-router.put('/:postId/coverImage', uploadTemporary.single('coverImage'), catchAsync(updateCoverImage));
+router.delete('/:postId/brochure', adminRouteGuard, catchAsync(deleteBrochure));
 
-router.patch('/:postId/toggle-status', catchAsync(toggleStatus));
+router.put(
+  '/:postId/coverImage',
+  adminRouteGuard,
+  uploadTemporary.single('coverImage'),
+  catchAsync(updateCoverImage)
+);
 
-router.delete('/:postId', catchAsync(deletePost));
+router.patch(
+  '/:postId/toggle-status',
+  adminRouteGuard,
+  catchAsync(toggleStatus)
+);
+
+router.delete('/:postId', adminRouteGuard, catchAsync(deletePost));
 exports.postRoutes = router;

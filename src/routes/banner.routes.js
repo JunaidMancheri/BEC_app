@@ -11,23 +11,30 @@ const {
   updateBanner,
 } = require('../banner');
 const {catchAsync} = require('../common/catchAsync.utils');
+const {adminRouteGuard, populateUserDetails} = require('../auth');
 
 const router = new Router();
 
 router.post(
   '/',
+  adminRouteGuard,
   uploadTemporary.single('image'),
   validateInputs(createBannerValidator),
   catchAsync(createBanner)
 );
 
-router.get('/', catchAsync(getBanners));
+router.get('/', populateUserDetails, catchAsync(getBanners));
 
-router.delete('/:bannerId', catchAsync(deleteBanner));
+router.delete('/:bannerId', adminRouteGuard, catchAsync(deleteBanner));
 
-router.patch('/:bannerId/toggle-status', catchAsync(toggleBannerStatus));
+router.patch(
+  '/:bannerId/toggle-status',
+  adminRouteGuard,
+  catchAsync(toggleBannerStatus)
+);
 router.put(
   '/:bannerId',
+  adminRouteGuard,
   uploadTemporary.single('image'),
   validateInputs(updateBannerValidator),
   catchAsync(updateBanner)

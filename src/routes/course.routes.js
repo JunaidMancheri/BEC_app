@@ -9,24 +9,26 @@ const {
   deleteCourse,
 } = require('../course');
 const {catchAsync} = require('../common/catchAsync.utils');
+const {adminRouteGuard, populateUserDetails} = require('../auth');
 
 const router = Router();
 
 router.post(
   '/',
+  adminRouteGuard,
   validateInputs(createCourseValidator),
   catchAsync(createCourse)
 );
 
-router.get('/', catchAsync(getCourses));
+router.get('/', populateUserDetails, catchAsync(getCourses));
 
 router.put(
   '/:courseId',
+  adminRouteGuard,
   validateInputs(updateCourseValidator),
   catchAsync(updateCourse)
 );
 
-router.delete('/:courseId', catchAsync(deleteCourse));
-
+router.delete('/:courseId', adminRouteGuard, catchAsync(deleteCourse));
 
 exports.courseRoutes = router;
