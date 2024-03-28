@@ -7,6 +7,7 @@ const {
   updateCourseValidator,
   updateCourse,
   deleteCourse,
+  getCourseAndProvidingColleges,
 } = require('../course');
 const {catchAsync} = require('../common/catchAsync.utils');
 const {adminRouteGuard, populateUserDetails} = require('../auth');
@@ -21,6 +22,8 @@ router.post(
 );
 
 router.get('/', catchAsync(getCourses));
+
+router.get('/:courseId', catchAsync(getCourseAndProvidingColleges))
 
 router.put(
   '/:courseId',

@@ -61,3 +61,44 @@ exports.deleteCourse = async (req, res) => {
   EventEmitter.emit('Course:Deleted', {courseId: req.params.courseId});
   res.status(204).end();
 };
+
+
+exports.getCourseAndProvidingColleges = async (req, res) => {
+  const pipeline = [
+    {
+      $match: { 
+        _id: req.params.courseId
+      }
+    },
+    {
+      $lookup: { 
+        from: 'posts',
+        localField: 'courses',
+        as: 'colleges'
+    },
+  },
+    {
+      $unwind: '$colleges'
+    },
+    {
+      $lookup: {
+        from: 'courses',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'courseDetails'
+      }
+    },
+    {
+      $unwind: '$courseDetails' 
+    },
+    {
+      $project: {
+        _id: 0,
+        courseDetails: 1,
+        colleges: 1
+      }
+    }
+  ];
+  const result = await CourseModel.aggregate(pipeline);
+  res.json(respondSuccess(result));
+}
