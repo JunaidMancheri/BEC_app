@@ -8,17 +8,19 @@ const { courseRoutes } = require("./course.routes");
 const { enquiryRoutes } = require("./enquiry.routes");
 const { adminRoutes } = require("./admin.routes");
 const { authRoutes } = require("./auth.routes");
+const { searchRoutes } = require("./search.routes");
 
 const router = Router();
 
-router.use('/categories', categoryRoutes);
-router.use('/amenities', amenityRoutes);
-router.use('/posts', postRoutes);
-router.use('/banners', bannerRoutes);
-router.use('/general-details', generalDetailsRoutes);
-router.use('/courses', courseRoutes);
-router.use('/enquiries', enquiryRoutes);
-router.use('/admins', adminRoutes);
 router.use('/auth', authRoutes);
+router.use('/posts', postRoutes);
+router.use('/admins', adminRoutes);
+router.use('/search', searchRoutes);
+router.use('/banners', bannerRoutes);
+router.use('/courses', courseRoutes);
+router.use('/amenities', amenityRoutes);
+router.use('/enquiries', enquiryRoutes);
+router.use('/categories', categoryRoutes);
+router.use('/general-details', generalDetailsRoutes);
 
 exports.routes = router;
