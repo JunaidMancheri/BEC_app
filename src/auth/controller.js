@@ -11,6 +11,7 @@ const {
   validateToken,
 } = require('./token.service');
 const {sendResetPasswordLink} = require('./email.service');
+const { addToBlockList } = require('./block-list.service');
 
 exports.checkIfInvitationTokenValid = async (req, res) => {
   const email = validateToken(req.params.token);
@@ -26,6 +27,10 @@ exports.registerAdmin = async (req, res) => {
 exports.adminLogin = async (req, res) => {
   const admin = await getAdminDetails(req.body.email);
   if (!admin) throw new Unauthorized('Invalid email or password');
+  if (admin.isBlocked) {
+    addToBlockList(admin._id);
+    throw new Unauthorized('Access revoked');
+  }
   const isCorrect = await bcrypt.compare(req.body.password, admin.hashPassword);
   if (!isCorrect) throw new Unauthorized('Invalid email or password');
   const token = jwt.sign({isAdmin: true, ...admin}, appConfig.JWT_SECRET_KEY, {
