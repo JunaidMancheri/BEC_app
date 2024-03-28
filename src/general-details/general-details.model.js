@@ -1,4 +1,5 @@
-const {Schema, model} = require('mongoose');
+const {Schema, model, set} = require('mongoose');
+const { setGeneralDetails } = require('./general-details.in-memory');
 
 const generalDetailsSchema = new Schema({
   phoneNo_1: {type: String, default: ''},
@@ -14,8 +15,13 @@ exports.generalDetailsModel = generalDetailsModel;
 
 async function initGeneralDetails() {
   const doc = await generalDetailsModel.findOne();
-  if (doc) return;
-  await generalDetailsModel.create({}); 
+  if (doc) {
+    setGeneralDetails(doc);
+    return;
+  };
+  const newdoc = await generalDetailsModel.create({}); 
+  setGeneralDetails(newdoc);
+  return;
 }
 
 initGeneralDetails();

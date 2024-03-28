@@ -1,4 +1,5 @@
 const { respondSuccess } = require("../common/response.helper");
+const { setGeneralDetails, getGeneralDetails } = require("./general-details.in-memory");
 const { generalDetailsModel } = require("./general-details.model");
 
 exports.updateGeneralDetails = async (req, res) => {
@@ -16,10 +17,11 @@ exports.updateGeneralDetails = async (req, res) => {
   else updates.phoneNo_2 = '';
 
   await generalDetailsModel.findOneAndUpdate({}, updates);
+  setGeneralDetails(updates);
   res.json(respondSuccess(updates));
 }
 
 exports.getGeneralDetails = async (req, res) => {
-  const doc = await generalDetailsModel.findOne({});
+  const doc = getGeneralDetails();
   res.json(respondSuccess(doc));
 }
