@@ -1,12 +1,13 @@
 const {Router} = require('express');
 const {validateInputs} = require('../common/validators.utils');
 const {
-  registerAdminValidator,
+  passwordTokenValidator,
   registerAdmin,
   loginAdminValidator,
   adminLogin,
   passwordResetLinkValidator,
   sendResetPasswordLink,
+  resetPassword,
 } = require('../auth');
 const {catchAsync} = require('../common/catchAsync.utils');
 
@@ -14,7 +15,7 @@ const router = Router();
 
 router.post(
   '/register',
-  validateInputs(registerAdminValidator),
+  validateInputs(passwordTokenValidator),
   catchAsync(registerAdmin)
 );
 
@@ -33,5 +34,11 @@ router.post(
 router.get(
   '/reset-password-token-validate/:token',
   catchAsync(validateResetPasswordToken)
+);
+
+router.post(
+  '/reset-password',
+  validateInputs(passwordTokenValidator),
+  catchAsync(resetPassword)
 );
 exports.authRoutes = router;

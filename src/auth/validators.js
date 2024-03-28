@@ -1,16 +1,17 @@
 const { validatorFactory } = require("../common/validators.utils");
 
-const registerAdminDtoSchema = {
+const passwordTokenDtoSchema = {
   type: 'object',
   properties: {
-    password: {type: 'string', format: 'password'}
+    password: {type: 'string', format: 'password'},
+    token: {type: 'string'},
   },
-  required: ['password'],
+  required: ['password', 'token'],
   additionalProperties: false,
 };
 
 
-exports.registerAdminValidator = validatorFactory(registerAdminDtoSchema);
+exports.passwordTokenValidator = validatorFactory(passwordTokenDtoSchema);
 
 const loginAdminDtoSchema = {
   type: 'object',

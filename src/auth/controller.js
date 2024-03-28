@@ -1,10 +1,10 @@
-const {createAdmin, getAdminDetails} = require('../admin');
+const {createAdmin, getAdminDetails, changePassword} = require('../admin');
 const {Unauthorized, NotFound} = require('http-errors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const {appConfig} = require('../config/app.config');
 const {respondSuccess} = require('../common/response.helper');
-const {generateToken, storeResetPasswordToken} = require('./token.service');
+const {generateToken, storeResetPasswordToken, validateResetPasswordToken} = require('./token.service');
 const {sendResetPasswordLink} = require('./email.service');
 
 exports.registerAdmin = async (req, res) => {
@@ -36,4 +36,11 @@ exports.sendResetPasswordLink = async (req, res) => {
 exports.validateResetPasswordToken = async (req, res) => {
   const email = this.validateResetPasswordToken(req.params.token);
   res.json(respondSuccess({email}))
+}
+
+
+exports.resetPassword = async (req, res) =>  {
+  const email  = validateResetPasswordToken(req.body.token);
+  await changePassword(email, req.body.password);
+  res.json(respondSuccess({message: 'Password  reset successfully'}));
 }
