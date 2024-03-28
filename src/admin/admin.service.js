@@ -19,5 +19,8 @@ exports.createAdmin = async (email, password) => {
     }
     throw error;
   }
+}
 
+exports.getAdminDetails = async (email) => {
+  return AdminModel.findOne({email});
 }

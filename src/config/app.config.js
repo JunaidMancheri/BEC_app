@@ -6,6 +6,7 @@ const appConfig = {
   APP_NAME: 'BEC',
   APP_EMAIL: undefined,
   APP_EMAIL_PASSWORD: undefined,
+  JWT_SECRET_KEY: undefined,
 };
 
 const loadAppConfig = async function () {
