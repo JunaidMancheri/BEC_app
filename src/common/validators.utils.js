@@ -1,6 +1,8 @@
 const Ajv = require('ajv');
 const {BadRequest} = require('http-errors');
-const ajv = new Ajv();
+const ajvFormats = require('ajv-formats');
+const ajv = new Ajv({allowUnionTypes: true});
+ajvFormats(ajv);
 
 
 exports.validatorFactory = (schema) => {

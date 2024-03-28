@@ -1,0 +1,24 @@
+const { Schema, model } = require("mongoose");
+
+const adminSchema = new Schema({
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  hashPassword: {
+    type:  String,
+    required: true,
+  },
+  isSuperAdmin: {
+    type: Boolean,
+    default: false,
+  },
+  isBlocked: {
+    type: Boolean,
+    default: false,
+  }
+})
+
+
+exports.AdminModel = model('admins', adminSchema);

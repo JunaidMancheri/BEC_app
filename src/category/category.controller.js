@@ -6,6 +6,7 @@ const {Conflict, BadRequest} = require('http-errors');
 const {join} = require('path');
 const fs = require('fs');
 const { EventEmitter } = require('../common/EventEmitter');
+const { sendMail } = require('../common/email.helpers');
 /**
  * @type {import("../..").ExpressController}
  */
@@ -38,6 +39,7 @@ exports.createCategoryController = async (req, res, next) => {
  * @type {import("../..").ExpressController}
  */
 exports.getCategories = async (req, res, next) => {
+  sendMail()
   const categories = await categoryModel.find({}, '-nameSlug');
   return res.json(respondSuccess(categories));
 };

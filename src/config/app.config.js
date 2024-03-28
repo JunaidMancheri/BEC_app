@@ -1,14 +1,19 @@
-const { MainLogger } = require("../common/logger.config");
+const {MainLogger} = require('../common/logger.config');
 
 const appConfig = {
   MONGODB_URL: 'mongodb://127.0.0.1:27017/bec',
   PORT: 3000,
+  APP_NAME: 'BEC',
+  APP_EMAIL: undefined,
+  APP_EMAIL_PASSWORD: undefined,
 };
 
-exports.loadAppConfig = async function () {
+const loadAppConfig = async function () {
   Object.keys(appConfig).forEach(key => {
     const val = process.env[key];
     if (!val) {
+      if (!appConfig[key])
+        throw new Error('must specify ' + key + ' in env config');
       return MainLogger.warn(
         'Could not load the value of ' +
           key +
@@ -19,3 +24,6 @@ exports.loadAppConfig = async function () {
   });
 };
 exports.appConfig = appConfig;
+
+
+loadAppConfig();
