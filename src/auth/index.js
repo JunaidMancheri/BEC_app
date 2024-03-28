@@ -3,5 +3,6 @@ module.exports = {
   ...require('./token.service'),
   ...require('./validators'),
   ...require('./block-list.service'),
-
+  ...require('./guards'),
+  ...require('./middlewares'),
 }
