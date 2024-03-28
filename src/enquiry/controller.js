@@ -19,3 +19,8 @@ exports.getEnquiries = async (req, res) => {
   const enquiries = await EnquiryModel.find();
   res.json(respondSuccess(enquiries));
 };
+
+exports.deleteEnquiry = async (req, res) => {
+  await EnquiryModel.findByIdAndDelete(req.params.enquiryId);
+  res.status(204).end();
+};
