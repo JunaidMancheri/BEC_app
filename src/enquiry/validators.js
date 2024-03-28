@@ -11,7 +11,7 @@ const enquiryDtoSchema = {
     post: {type: 'string'},
     course: {type: 'string'},
   },
-  required: ['name', 'email', 'city', 'phoneNo'],
+  required: ['name', 'email', 'phoneNo'],
   additionalProperties: false,
 };
 

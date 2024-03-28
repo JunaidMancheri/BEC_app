@@ -23,7 +23,6 @@ const enquirySchema = new Schema({
   },
   city: {
     type: String,
-    required: true
   },
   note: {
     type: String,
