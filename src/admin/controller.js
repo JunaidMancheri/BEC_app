@@ -20,6 +20,7 @@ exports.getAdmins = async (req, res) => {
 
 exports.deleteAdmin = async (req, res) => {
   await AdminModel.findById(req.params.adminId);
+  addToBlockList(req.params.adminId);
   res.status(204).end();
 };
 
