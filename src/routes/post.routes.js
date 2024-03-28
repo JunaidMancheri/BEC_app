@@ -37,8 +37,8 @@ router.post(
   catchAsync(createPost)
 );
 
-router.get('/', populateUserDetails, catchAsync(getAllPosts));
-router.get('/category/:categoryId', catchAsync(getPostsOfACategory));
+router.get('/', adminRouteGuard, catchAsync(getAllPosts));
+router.get('/category/:categoryId',populateUserDetails, catchAsync(getPostsOfACategory));
 router.get('/:postId/courses', catchAsync(getCoursesOfAPost));
 router.get('/:postId', populateUserDetails, catchAsync(getSinglePost));
 
