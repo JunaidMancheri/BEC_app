@@ -10,10 +10,16 @@ const {
   resetPassword,
   updatePasswordValidator,
   changePassword,
+  checkIfInvitationTokenValid,
 } = require('../auth');
 const {catchAsync} = require('../common/catchAsync.utils');
 
 const router = Router();
+
+router.get(
+  '/invitation-token-validate/:token',
+  catchAsync(checkIfInvitationTokenValid)
+);
 
 router.post(
   '/register',

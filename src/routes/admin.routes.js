@@ -1,6 +1,6 @@
 const {Router} = require('express');
 const {catchAsync} = require('../common/catchAsync.utils');
-const {inviteAdmin, checkIfTokenValid} = require('../admin/controller');
+const {inviteAdmin, getAdmins, deleteAdmin} = require('../admin/controller');
 const {validateInputs} = require('../common/validators.utils');
 const {inviteAdminValidator} = require('../admin/validators');
 
@@ -12,6 +12,6 @@ router.post(
   catchAsync(inviteAdmin)
 );
 
-router.get('/token-validate/:token', catchAsync(checkIfTokenValid));
-
+router.get('/', catchAsync(getAdmins));
+router.delete('/:adminId', catchAsync(deleteAdmin));
 exports.adminRoutes = router;

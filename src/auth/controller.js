@@ -8,8 +8,14 @@ const {
   generateToken,
   storeResetPasswordToken,
   validateResetPasswordToken,
+  validateToken,
 } = require('./token.service');
 const {sendResetPasswordLink} = require('./email.service');
+
+exports.checkIfInvitationTokenValid = async (req, res) => {
+  const email = validateToken(req.params.token);
+  res.json(respondSuccess({email}));
+};
 
 exports.registerAdmin = async (req, res) => {
   const email = validateToken(req.body.token);

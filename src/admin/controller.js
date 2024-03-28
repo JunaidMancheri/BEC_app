@@ -14,7 +14,13 @@ exports.inviteAdmin = async (req, res) => {
 };
 
 
-exports.checkIfTokenValid = async (req, res) => {
-  const email = validateToken(req.params.token);
-  res.json(respondSuccess({email}))
+exports.getAdmins = async (req, res) => {
+  const admins = await AdminModel.find({isSuperAdmin: false});
+  res.json(respondSuccess(admins));
+}
+
+
+exports.deleteAdmin = async (req, res) => {
+  await AdminModel.findById(req.params.adminId);
+  res.status(204).end();
 }
