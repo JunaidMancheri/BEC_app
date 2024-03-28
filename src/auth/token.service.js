@@ -1,14 +1,17 @@
 const crypto = require('crypto');
 const {Forbidden} = require('http-errors');
 
-const tokens = {};
+const tokens = {
+  resetPassword : {},
+  invitation: {},
+};
 
 function storeToken(token, email) {
-  tokens[email] = {token, expirestAt: Date.now() + 900000};
+  tokens.invitation[email] = {token, expirestAt: Date.now() + 900000};
 }
 
 exports.validateToken = (token, email) => {
-  for (const [key, value] of Object.entries(tokens)) {
+  for (const [key, value] of Object.entries(tokens.invitation)) {
     if (token === value.token) {
       const now = Date.now();
       if (now > value.expirestAt)
@@ -34,3 +37,21 @@ exports.generateAndStoreToken = function (email) {
     });
   });
 };
+
+exports.storeResetPasswordToken = function (email, token) {
+  tokens.resetPassword[email] = {token, expiresAt: Date.now() + 900000}
+}
+
+
+exports.generateToken = function () {
+  return new Promise((resolve, reject) => {
+    crypto.randomBytes(32, (err, buffer) => {
+      if (err) {
+        reject(err);
+      } else {
+        const token = buffer.toString('hex');
+        resolve(token);
+      }
+    });
+  });
+}

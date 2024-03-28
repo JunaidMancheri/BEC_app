@@ -23,3 +23,15 @@ const loginAdminDtoSchema = {
 };
 
 exports.loginAdminValidator = validatorFactory(loginAdminDtoSchema);
+
+const passwordResetLinkDtoSchema = {
+  type: 'object',
+  properties: {
+    email: {type: 'string', format: 'email'}
+  },
+  required: ['email'],
+  additionalProperties: false,
+};
+
+
+exports.passwordResetLinkValidator = validatorFactory(passwordResetLinkDtoSchema);

@@ -5,6 +5,8 @@ const {
   registerAdmin,
   loginAdminValidator,
   adminLogin,
+  passwordResetLinkValidator,
+  sendResetPasswordLink,
 } = require('../auth');
 const {catchAsync} = require('../common/catchAsync.utils');
 
@@ -20,6 +22,12 @@ router.post(
   '/login',
   validateInputs(loginAdminValidator),
   catchAsync(adminLogin)
+);
+
+router.post(
+  '/send-password-reset-link',
+  validateInputs(passwordResetLinkValidator),
+  catchAsync(sendResetPasswordLink)
 );
 
 exports.authRoutes = router;
