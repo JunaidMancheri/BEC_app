@@ -8,6 +8,8 @@ const {
   passwordResetLinkValidator,
   sendResetPasswordLink,
   resetPassword,
+  updatePasswordValidator,
+  changePassword,
 } = require('../auth');
 const {catchAsync} = require('../common/catchAsync.utils');
 
@@ -40,5 +42,11 @@ router.post(
   '/reset-password',
   validateInputs(passwordTokenValidator),
   catchAsync(resetPassword)
+);
+
+router.put(
+  '/change-password',
+  validateInputs(updatePasswordValidator),
+  catchAsync(changePassword)
 );
 exports.authRoutes = router;

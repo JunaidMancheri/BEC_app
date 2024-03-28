@@ -1,10 +1,14 @@
-const {createAdmin, getAdminDetails, changePassword} = require('../admin');
+const {createAdmin, getAdminDetails, resetPassword} = require('../admin');
 const {Unauthorized, NotFound} = require('http-errors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const {appConfig} = require('../config/app.config');
 const {respondSuccess} = require('../common/response.helper');
-const {generateToken, storeResetPasswordToken, validateResetPasswordToken} = require('./token.service');
+const {
+  generateToken,
+  storeResetPasswordToken,
+  validateResetPasswordToken,
+} = require('./token.service');
 const {sendResetPasswordLink} = require('./email.service');
 
 exports.registerAdmin = async (req, res) => {
@@ -18,7 +22,9 @@ exports.adminLogin = async (req, res) => {
   if (!admin) throw new Unauthorized('Invalid email or password');
   const isCorrect = await bcrypt.compare(req.body.password, admin.hashPassword);
   if (!isCorrect) throw new Unauthorized('Invalid email or password');
-  const token = jwt.sign(admin, appConfig.JWT_SECRET_KEY, {expiresIn: '2h'});
+  const token = jwt.sign({isAdmin: true, ...admin}, appConfig.JWT_SECRET_KEY, {
+    expiresIn: '2h',
+  });
   res.json(respondSuccess({token}));
 };
 
@@ -35,12 +41,26 @@ exports.sendResetPasswordLink = async (req, res) => {
 
 exports.validateResetPasswordToken = async (req, res) => {
   const email = this.validateResetPasswordToken(req.params.token);
-  res.json(respondSuccess({email}))
-}
+  res.json(respondSuccess({email}));
+};
 
-
-exports.resetPassword = async (req, res) =>  {
-  const email  = validateResetPasswordToken(req.body.token);
-  await changePassword(email, req.body.password);
+exports.resetPassword = async (req, res) => {
+  const email = validateResetPasswordToken(req.body.token);
+  await resetPassword(email, req.body.password);
   res.json(respondSuccess({message: 'Password  reset successfully'}));
-}
+};
+
+exports.changePassword = async (req, res) => {
+  const email = req.user.email;
+  const admin = await getAdminDetails(email);
+  if (!admin) throw new NotFound('admin not found');
+  const oldPasswordCorrect = await bcrypt.compare(
+    req.body.oldPassword,
+    admin.hashPassword
+  );
+  if (!oldPasswordCorrect) throw new Unauthorized('Old password is incorrect');
+  const hash = await bcrypt.hash(req.body.newPassword, 10);
+  admin.hashPassword = hash;
+  await admin.save();
+  res.json(respondSuccess({message: 'password updated successfully'}));
+};

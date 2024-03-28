@@ -36,3 +36,16 @@ const passwordResetLinkDtoSchema = {
 
 
 exports.passwordResetLinkValidator = validatorFactory(passwordResetLinkDtoSchema);
+
+const updatePasswordDtoSchema = {
+  type: 'object',
+  properties: {
+    newPassword: {type: 'string', format: 'password'},
+    oldPassword: {type: 'string', format: 'password'}
+  },
+  required: ['newPassword', 'oldPassword'],
+  additionalProperties: false,
+};
+
+
+exports.updatePasswordValidator = validatorFactory(updatePasswordDtoSchema);

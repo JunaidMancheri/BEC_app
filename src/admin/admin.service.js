@@ -25,7 +25,7 @@ exports.getAdminDetails = async (email) => {
   return AdminModel.findOne({email});
 }
 
-exports.changePassword = async(email, password) => {
+exports.resetPassword = async(email, password) => {
   const hash = await bcrypt.hash(password, 10)
   await AdminModel.findOneAndUpdate({email}, {hashPassword: hash});
 }
