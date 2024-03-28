@@ -14,6 +14,7 @@ const {
   toggleStatus,
   deletePost,
   getCoursesOfAPost,
+  getPostsProvidingACourse,
 } = require('../post/post.controller');
 const {uploadTemporary} = require('../common/upload.helper');
 const {validateInputs} = require('../common/validators.utils');
@@ -38,9 +39,15 @@ router.post(
 );
 
 router.get('/', adminRouteGuard, catchAsync(getAllPosts));
-router.get('/category/:categoryId',populateUserDetails, catchAsync(getPostsOfACategory));
+router.get(
+  '/category/:categoryId',
+  populateUserDetails,
+  catchAsync(getPostsOfACategory)
+);
 router.get('/:postId/courses', catchAsync(getCoursesOfAPost));
 router.get('/:postId', populateUserDetails, catchAsync(getSinglePost));
+
+router.get('/course/:courseId', catchAsync(getPostsProvidingACourse));
 
 router.put('/:postId/details', adminRouteGuard, catchAsync(updatePostDetails));
 router.post(

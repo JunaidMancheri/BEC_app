@@ -20,7 +20,7 @@ router.post(
   catchAsync(createCourse)
 );
 
-router.get('/', populateUserDetails, catchAsync(getCourses));
+router.get('/', catchAsync(getCourses));
 
 router.put(
   '/:courseId',

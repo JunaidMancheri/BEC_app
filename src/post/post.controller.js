@@ -226,3 +226,11 @@ exports.deletePost = async (req, res, next) => {
   await PostModel.findByIdAndDelete(req.params.id);
   res.status(204).end();
 };
+
+exports.getPostsProvidingACourse = async (req, res) => {
+  const results = await PostModel.find(
+    {courses: req.params.courseId},
+    'coverImageUrl title'
+  );
+  res.json(respondSuccess(results));
+};
