@@ -55,3 +55,17 @@ exports.generateToken = function () {
     });
   });
 }
+
+exports.validateResetPasswordToken = function (token) {
+  for (const [key, value] of Object.entries(tokens.resetPassword)) {
+    if (token === value.token) {
+      const now = Date.now();
+      if (now > value.expirestAt)
+        throw new Forbidden(
+          'token expired, please ask admin to generate new link'
+        );
+      return key;
+    }
+  }
+  throw new Forbidden('Invalid token');
+}

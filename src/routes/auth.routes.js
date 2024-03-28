@@ -30,4 +30,8 @@ router.post(
   catchAsync(sendResetPasswordLink)
 );
 
+router.get(
+  '/reset-password-token-validate/:token',
+  catchAsync(validateResetPasswordToken)
+);
 exports.authRoutes = router;

@@ -32,3 +32,8 @@ exports.sendResetPasswordLink = async (req, res) => {
     respondSuccess({message: 'Reset password link sent to mail successfully'})
   );
 };
+
+exports.validateResetPasswordToken = async (req, res) => {
+  const email = this.validateResetPasswordToken(req.params.token);
+  res.json(respondSuccess({email}))
+}
