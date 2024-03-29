@@ -38,7 +38,7 @@ const postSchema = new Schema({
         validator: function (v) {
           return this.gallery.length <= 4;
         },
-        message: 'Gallery can contain at most 4 images',
+        message: 'Gallery can only contain at most 4 images',
       },
     },
   ],

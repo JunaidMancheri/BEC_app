@@ -3,6 +3,7 @@ const {MainLogger} = require('../common/logger.config');
 const appConfig = {
   MONGODB_URL: 'mongodb://127.0.0.1:27017/bec',
   PORT: 3000,
+  APP_BASE_URL: 'http://localhost:3000',
   APP_NAME: 'BEC',
   APP_EMAIL: undefined,
   APP_EMAIL_PASSWORD: undefined,

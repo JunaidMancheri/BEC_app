@@ -1,5 +1,5 @@
 const {Router} = require('express');
-const {catchAsync} = require('../common/catchAsync.utils');
+const {catchAsync} = require('../common/utils');
 const {
   createPost,
   getAllPosts,

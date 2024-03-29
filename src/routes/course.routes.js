@@ -9,7 +9,7 @@ const {
   deleteCourse,
   getCourseAndProvidingColleges,
 } = require('../course');
-const {catchAsync} = require('../common/catchAsync.utils');
+const {catchAsync} = require('../common/utils');
 const {adminRouteGuard, populateUserDetails} = require('../auth');
 
 const router = Router();

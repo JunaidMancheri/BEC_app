@@ -10,7 +10,7 @@ const {
   updateBannerValidator,
   updateBanner,
 } = require('../banner');
-const {catchAsync} = require('../common/catchAsync.utils');
+const {catchAsync} = require('../common/utils');
 const {adminRouteGuard, populateUserDetails} = require('../auth');
 
 const router = new Router();

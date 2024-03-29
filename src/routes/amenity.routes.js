@@ -9,7 +9,7 @@ const {
   updateAmenityValidator,
   deleteAmenity,
 } = require('../amenity');
-const {catchAsync} = require('../common/catchAsync.utils');
+const {catchAsync} = require('../common/utils');
 const {adminRouteGuard} = require('../auth');
 
 const router = Router();

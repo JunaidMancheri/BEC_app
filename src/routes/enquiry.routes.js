@@ -1,6 +1,6 @@
 const {Router} = require('express');
 const {validateInputs} = require('../common/validators.utils');
-const {catchAsync} = require('../common/catchAsync.utils');
+const {catchAsync} = require('../common/utils');
 const {
   enquiryValidator,
   createEnquiry,

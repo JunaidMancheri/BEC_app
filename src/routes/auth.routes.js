@@ -14,7 +14,7 @@ const {
   validateResetPasswordToken,
   adminRouteGuard,
 } = require('../auth');
-const {catchAsync} = require('../common/catchAsync.utils');
+const {catchAsync} = require('../common/utils');
 
 const router = Router();
 
