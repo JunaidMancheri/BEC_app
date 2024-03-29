@@ -6,13 +6,11 @@ const {Conflict, BadRequest} = require('http-errors');
 const {join} = require('path');
 const fs = require('fs');
 const {EventEmitter} = require('../common/EventEmitter');
-const {sendMail} = require('../common/email.helpers');
 const {
   cloudinary,
   isCloudinaryUrl,
   getPublicId,
 } = require('../common/cloudinary.service');
-const streamifier = require('streamifier');
 const {appConfig} = require('../config/app.config');
 const {extractFilePathFromUrl} = require('../common/utils');
 /**

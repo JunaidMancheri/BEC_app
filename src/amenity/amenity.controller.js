@@ -6,6 +6,13 @@ const {join} = require('path');
 const fs = require('fs');
 const {amenityModel} = require('./amenity.model');
 const {EventEmitter} = require('../common/EventEmitter');
+const {appConfig} = require('../config/app.config');
+const {
+  cloudinary,
+  isCloudinaryUrl,
+  getPublicId,
+} = require('../common/cloudinary.service');
+const {extractFilePathFromUrl} = require('../common/utils');
 
 /**
  * @type {import("../..").ExpressController}
@@ -19,18 +26,28 @@ exports.createAmenity = async (req, res, next) => {
     doc = await amenityModel.create({
       nameSlug: generateSlug(req.body.name),
       name: req.body.name,
-      imageUrl: `/uploads/amenities/${filename}`,
+      imageUrl: `${appConfig.APP_BASE_URL}/uploads/amenities/${filename}`,
     });
   } catch (error) {
     if (error.code === 11000) throw new Conflict('Amenity already exists');
+    throw error;
   }
 
-  await fs.promises.writeFile(
-    join('public', 'uploads', 'amenities', filename),
-    req.file.buffer
-  );
+  const filePath = join('public', 'uploads', 'amenities', filename);
+  await fs.promises.writeFile(filePath, req.file.buffer);
 
-  return res.json(respondSuccess(doc));
+  res.json(respondSuccess(doc)).end();
+
+  cloudinary.uploader.upload(filePath, async (err, info) => {
+    try {
+      if (err) return;
+      doc.imageUrl = info.url;
+      await doc.save();
+      fs.promises.unlink(filePath).catch(() => {});
+    } catch (error) {
+      cloudinary.uploader.destroy(info.public_id).catch(() => {});
+    }
+  });
 };
 
 exports.getAmenities = async (req, res) => {
@@ -39,45 +56,69 @@ exports.getAmenities = async (req, res) => {
 };
 
 exports.updateAmenity = async (req, res) => {
-  if (req.body.name || req.file) {
-    const doc = await amenityModel.findById(req.params.amenityId);
-    if (req.body.name) {
-      doc.name = req.body.name;
-      doc.nameSlug = generateSlug(req.body.name);
-    }
-    let oldfile = doc.imageUrl.split('/')[3];
-    let filename;
-    if (req.file) {
-      filename = generateFilename(req.file.mimetype);
-      doc.imageUrl = `/uploads/amenities/${filename}`;
-    }
-
-    try {
-      const response = await doc.save({new: true});
-      if (req.file) {
-        await fs.promises.unlink(
-          join('public', 'uploads', 'amenities', oldfile)
-        );
-        await fs.promises.writeFile(
-          join('public', 'uploads', 'amenities', filename),
-          req.file.buffer
-        );
-      }
-
-      return res.json(respondSuccess(response));
-    } catch (error) {
-      if (error.code === 11000) {
-        throw new Conflict('Amenity is already in use');
-      }
-      throw error;
-    }
+  if (!req.body.name && !req.file) {
+    return res.status(204).end();
   }
 
-  return res.status(204).end();
+  const doc = await amenityModel.findById(req.params.amenityId);
+  if (req.body.name) {
+    doc.name = req.body.name;
+    doc.nameSlug = generateSlug(req.body.name);
+  }
+  let oldfileUrl = doc.imageUrl;
+  let filename;
+  let filePath;
+  if (req.file) {
+    filename = generateFilename(req.file.mimetype);
+    doc.imageUrl = `${appConfig.APP_BASE_URL}/uploads/amenities/${filename}`;
+    filePath = join('public', 'uploads', 'amenities', filename);
+  }
+
+  try {
+    const response = await doc.save({new: true});
+    if (req.file) {
+      await fs.promises.writeFile(filePath, req.file.buffer);
+    }
+
+    res.json(respondSuccess(response)).end();
+  } catch (error) {
+    if (error.code === 11000) {
+      throw new Conflict('Amenity is already in use');
+    }
+    throw error;
+  }
+
+  if (req.file) {
+    cloudinary.uploader.upload(filePath, async (err, info) => {
+      try {
+        if (err) return;
+        doc.imageUrl = info.url;
+        await doc.save();
+        fs.promises.unlink(filePath).catch(() => {});
+        if (isCloudinaryUrl(oldfileUrl)) {
+          cloudinary.uploader.destroy(getPublicId(oldfileUrl)).catch(() => {});
+        } else {
+          fs.promises
+            .unlink(extractFilePathFromUrl(oldfileUrl))
+            .catch(err => {});
+        }
+      } catch (error) {
+        cloudinary.uploader.destroy(info.public_id).catch(() => {});
+      }
+    });
+  }
 };
 
 exports.deleteAmenity = async (req, res, next) => {
-  await amenityModel.findByIdAndDelete(req.params.amenityId);
-  EventEmitter.emit('Amenity:Deleted', {amenityId: req.params.amenityId});
+  const doc = await amenityModel.findByIdAndDelete(req.params.amenityId);
+  
   res.status(204).end();
+  
+  EventEmitter.emit('Amenity:Deleted', {amenityId: req.params.amenityId});
+  if (isCloudinaryUrl(doc.imageUrl)) {
+    cloudinary.uploader.destroy(getPublicId(doc.imageUrl)).catch(() => {});
+  } else {
+    fs.promises.unlink(extractFilePathFromUrl(doc.imageUrl)).catch(() => {});
+  }
+
 };
