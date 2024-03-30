@@ -13,6 +13,10 @@ const {
 } = require('../common/cloudinary.service');
 const {appConfig} = require('../config/app.config');
 const {extractFilePathFromUrl} = require('../common/utils');
+const { makeLogger } = require('../common/logger.config');
+
+const Logger = makeLogger('Category');
+
 /**
  * @type {import("../..").ExpressController}
  */
@@ -35,7 +39,8 @@ exports.createCategoryController = async (req, res, next) => {
   }
   const filePath = join('public', 'uploads', 'categories', filename);
   await fs.promises.writeFile(filePath, req.file.buffer);
-
+  
+  Logger.info('Category created ' + doc.name);
   res.json(respondSuccess(doc)).end();
 
   cloudinary.uploader.upload(filePath, async (err, info) => {
@@ -87,7 +92,8 @@ exports.updateCategory = async (req, res, next) => {
     if (req.file) {
       await fs.promises.writeFile(filePath, req.file.buffer);
     }
-
+     
+    Logger.info('Category updated ' + doc._id);
     res.json(respondSuccess(doc)).end();
   } catch (error) {
     if (error.code === 11000) {
@@ -120,10 +126,12 @@ exports.updateCategory = async (req, res, next) => {
 exports.toggleStatus = async (req, res, next) => {
   const doc = await categoryModel.findById(req.params.categoryId);
   doc.isActive = !doc.isActive;
-  const newDoc = await doc.save();
+  await doc.save();
   EventEmitter.emit('Category:StatusChanged', {
-    categoryId: newDoc._id,
-    status: newDoc.isActive,
+    categoryId: doc._id,
+    status: doc.isActive,
   });
+  
+  Logger.info('Category status changed to ' + doc.isActive + ' ' + doc._id);
   res.json(respondSuccess(newDoc));
 };
