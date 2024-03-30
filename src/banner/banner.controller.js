@@ -41,8 +41,11 @@ exports.createBanner = async (req, res, next) => {
 };
 
 exports.getBanners = async (req, res, next) => {
-  // isActive based on admin and users;
-  const banners = await BannerModel.find();
+  let filter = {isActive : true};
+  if (req.user?.isAdmin) {
+    filter = {};
+  }
+  const banners = await BannerModel.find(filter);
   res.json(respondSuccess(banners));
 };
 

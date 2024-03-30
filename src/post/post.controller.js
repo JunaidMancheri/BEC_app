@@ -121,10 +121,12 @@ exports.getAllPosts = async (req, res, next) => {
 };
 
 exports.getPostsOfACategory = async (req, res, next) => {
+  let filter = {isActive: true, isCategoryActive: true};
+  if (req.user?.isAdmin) filter = {};
+
   const posts = await PostModel.find({
     category: req.params.categoryId,
-    isActive: true,
-    isCategoryActive: true,
+    ...filter,
   })
     .populate('amenities')
     .populate('courses');
@@ -141,10 +143,11 @@ exports.getCoursesOfAPost = async (req, res) => {
 };
 
 exports.getSinglePost = async (req, res, next) => {
-  const post = await PostModel.findById(req.params.postId, {
-    isActive: true,
-    isCategoryActive: true,
-  })
+
+  let filter = {isActive: true, isCategoryActive: true};
+  if (req.user?.isAdmin) filter = {};
+
+  const post = await PostModel.findById(req.params.postId, filter)
     .populate('amenities')
     .populate('courses');
   return res.json(respondSuccess(post));

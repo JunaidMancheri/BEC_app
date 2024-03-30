@@ -54,7 +54,9 @@ exports.createCategoryController = async (req, res, next) => {
  * @type {import("../..").ExpressController}
  */
 exports.getCategories = async (req, res, next) => {
-  const categories = await categoryModel.find({}, '-nameSlug');
+  let filter = {isActive: true};
+  if (req.user?.isAdmin) filter = {};
+  const categories = await categoryModel.find(filter, '-nameSlug');
   res.json(respondSuccess(categories));
 };
 
