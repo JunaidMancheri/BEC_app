@@ -83,5 +83,7 @@ router.patch(
   catchAsync(toggleStatus)
 );
 
-router.delete('/:postId', adminRouteGuard, catchAsync(deletePost));
+router.delete('/:postId', 
+// adminRouteGuard, 
+catchAsync(deletePost));
 exports.postRoutes = router;

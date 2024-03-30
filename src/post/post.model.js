@@ -31,23 +31,12 @@ const postSchema = new Schema({
   courses: {
     type: [{type: Schema.Types.ObjectId, ref: 'courses'}],
   },
-  gallery: [
-    {
-      type: String,
-      validate: {
-        validator: function (v) {
-          return this.gallery.length <= 4;
-        },
-        message: 'Gallery can only contain at most 4 images',
-      },
-    },
-  ],
+  gallery: [String],
   contactNumber: {
     type: Number,
     required: true,
   },
   brochureUrl: String,
 });
-
 
 exports.PostModel = model('posts', postSchema);
