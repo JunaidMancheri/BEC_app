@@ -12,6 +12,9 @@ const {
 } = require('./token.service');
 const {sendResetPasswordLink} = require('./email.service');
 const { addToBlockList } = require('./block-list.service');
+const { makeLogger } = require('../common/logger.config');
+
+const Logger = makeLogger('Auth');
 
 exports.checkIfInvitationTokenValid = async (req, res) => {
   const email = validateToken(req.params.token);
@@ -21,6 +24,8 @@ exports.checkIfInvitationTokenValid = async (req, res) => {
 exports.registerAdmin = async (req, res) => {
   const email = validateToken(req.body.token);
   const admin = await createAdmin(email, req.body.password);
+
+  Logger.info('New admin added ' + email);
   res.json(respondSuccess(admin)).status(201);
 };
 
@@ -34,8 +39,10 @@ exports.adminLogin = async (req, res) => {
   const isCorrect = await bcrypt.compare(req.body.password, admin.hashPassword);
   if (!isCorrect) throw new Unauthorized('Invalid email or password');
   const token = jwt.sign({isAdmin: true, ...admin}, appConfig.JWT_SECRET_KEY, {
-    expiresIn: '2h',
+    expiresIn: '2d',
   });
+
+  Logger.info('New login ' + admin.email);
   res.json(respondSuccess({token}));
 };
 
@@ -45,6 +52,9 @@ exports.sendResetPasswordLink = async (req, res) => {
   const token = await generateToken();
   storeResetPasswordToken(req.body.email, token);
   await sendResetPasswordLink(req.body.email, token);
+
+  Logger.info('Requested for password reset link ' + req.body.email);
+
   res.json(
     respondSuccess({message: 'Reset password link sent to mail successfully'})
   );
@@ -58,6 +68,8 @@ exports.validateResetPasswordToken = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   const email = validateResetPasswordToken(req.body.token);
   await resetPassword(email, req.body.password);
+
+  Logger.info('Password reset ' + email);
   res.json(respondSuccess({message: 'Password  reset successfully'}));
 };
 
@@ -73,5 +85,7 @@ exports.changePassword = async (req, res) => {
   const hash = await bcrypt.hash(req.body.newPassword, 10);
   admin.hashPassword = hash;
   await admin.save();
+
+  Logger.info('Password changed ' + email);
   res.json(respondSuccess({message: 'password updated successfully'}));
 };
