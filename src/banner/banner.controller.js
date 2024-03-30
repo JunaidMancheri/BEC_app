@@ -7,6 +7,9 @@ const {join} = require('path');
 const {appConfig} = require('../config/app.config');
 const { cloudinary, isCloudinaryUrl, getPublicId } = require('../common/cloudinary.service');
 const { extractFilePathFromUrl } = require('../common/utils');
+const { makeLogger } = require('../common/logger.config');
+
+const Logger = makeLogger('Banner');
 
 exports.createBanner = async (req, res, next) => {
   if (!req.file) throw new BadRequest('image is required');
@@ -24,6 +27,8 @@ exports.createBanner = async (req, res, next) => {
     isActive: true,
   });
 
+
+  Logger.info('created ' + doc._id);
   res.status(201).json(respondSuccess(doc));
   
 
@@ -51,6 +56,7 @@ exports.getBanners = async (req, res, next) => {
 
 exports.deleteBanner = async (req, res, next) => {
   const doc = await BannerModel.findByIdAndDelete(req.params.bannerId);
+  Logger.info('deleted ' + doc._id);
   res.status(204).end();
   if (isCloudinaryUrl(doc.imageUrl)) {
     cloudinary.uploader.destroy(getPublicId(doc.imageUrl)).catch(() => {});
@@ -63,6 +69,7 @@ exports.toggleBannerStatus = async (req, res, next) => {
   const doc = await BannerModel.findById(req.params.bannerId);
   doc.isActive = !doc.isActive;
   await doc.save();
+  Logger.info('status changed to  ' + doc.isActive + ' ' + doc._id );
   res.status(204).end();
 };
 
@@ -91,8 +98,10 @@ exports.updateBanner = async (req, res) => {
     await fs.promises.writeFile(filePath, req.file.buffer);
     doc.imageUrl = url;
   }
-  
+
   await doc.save();
+
+  Logger.info('updated ' + doc._id);
   res.json(respondSuccess(doc));
   
   if (req.file) {

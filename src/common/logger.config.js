@@ -7,8 +7,8 @@ const getFormat = label =>
     winston.format.timestamp({ format: 'DD-MM HH:mm:ss'}),
     winston.format.metadata({fillExcept: ['timestamp', 'level', 'message', 'label']}),
     winston.format.printf(({timestamp, level, message, metadata, label}) => {
-      if (metadata?.metadata && Object.keys(metadata?.metadata).length > 0) {
-        const formattedMetadata = Object.entries(metadata?.metadata)
+      if (metadata && Object.keys(metadata).length > 0) {
+        const formattedMetadata = Object.entries(metadata)
           .map(([key, value]) => `\n ${key}: '${value}'`)
           .join(', ');
         return `[${timestamp}] [${level}] [${label}] ${message} \n{${formattedMetadata}\n}`;
