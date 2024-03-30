@@ -8,6 +8,9 @@ const {
 const fs = require('fs');
 const {join} = require('path');
 const {respondSuccess} = require('../common/response.helper');
+const {appConfig} = require('../config/app.config');
+const {cloudinary} = require('../common/cloudinary.service');
+const {finished} = require('stream');
 
 /**
  * @type {import("../..").ExpressController}
@@ -21,28 +24,25 @@ exports.createPost = async (req, res) => {
     throw new BadRequest('gallery images can be only upto 4 images');
 
   let pdfFilename;
+  let pdfFilePath;
   if (req.files['brochureFile']) {
     pdfFilename = generatePdfFilename();
-    fs.promises.writeFile(
-      join('public', 'uploads', 'pdf', pdfFilename),
-      req.files['brochureFile'][0].buffer
-    );
+    pdfFilePath = join('public', 'uploads', 'pdf', pdfFilename);
+    fs.promises.writeFile(pdfFilePath, req.files['brochureFile'][0].buffer);
   }
 
   const coverImageName = generateFilename(req.files['coverImage'][0].mimetype);
-  fs.promises.writeFile(
-    join('public', 'uploads', 'posts', coverImageName),
-    req.files['coverImage'][0].buffer
-  );
+  let coverImagePath = join('public', 'uploads', 'posts', coverImageName);
+  fs.promises.writeFile(coverImagePath, req.files['coverImage'][0].buffer);
 
   const gallery = [];
+  const galleryFilePaths = [];
   req.files['gallery'].forEach(file => {
     const filename = generateFilename(file.mimetype);
-    fs.promises.writeFile(
-      join('public', 'uploads', 'posts', filename),
-      file.buffer
-    );
-    gallery.push(`/uploads/posts/${filename}`);
+    const filePath = join('public', 'uploads', 'posts', filename);
+    galleryFilePaths.push(filePath);
+    fs.promises.writeFile(filePath, file.buffer);
+    gallery.push(`${appConfig.APP_BASE_URL}/uploads/posts/${filename}`);
   });
 
   const doc = await PostModel.create({
@@ -54,12 +54,66 @@ exports.createPost = async (req, res) => {
     amenities: req.body['amenities'],
     description: req.body['description'],
     contactNumber: req.body['contactNumber'],
-    coverImageUrl: `/uploads/posts/${coverImageName}`,
+    coverImageUrl: `${appConfig.APP_BASE_URL}/uploads/posts/${coverImageName}`,
     isCategoryActive: await getCategoryStatus(req.body['category']),
-    brochureUrl: pdfFilename ? `/uploads/pdf/${pdfFilename}` : undefined,
+    brochureUrl: pdfFilename
+      ? `${appConfig.APP_BASE_URL}/uploads/pdf/${pdfFilename}`
+      : undefined,
   });
 
-  res.status(201).json(respondSuccess(doc));
+  res.status(201).json(respondSuccess(doc)).end();
+
+  const promises = [
+    ...galleryFilePaths.map(filePath => cloudinary.uploader.upload(filePath)),
+    cloudinary.uploader.upload(coverImagePath),
+    pdfFilePath && cloudinary.uploader.upload(pdfFilePath),
+  ];
+  const results = await Promise.allSettled(promises);
+
+  const publicIds = {
+    gallery: [null, null, null, null],
+    coverImage: null,
+    pdfFile: null,
+  };
+
+  for (let index = 0; index < results.length; index++) {
+    const result = results[index];
+    if (result.status === 'rejected') return;
+    const {url, public_id} = result.value;
+    if (index < galleryFilePaths.length) {
+      publicIds.gallery[index] = public_id;
+      doc.gallery[index] = url;
+    } else if (index === galleryFilePaths.length) {
+      publicIds.coverImage = public_id;
+      doc.coverImageUrl = url;
+    } else {
+      publicIds.pdfFile = public_id;
+      doc.brochureUrl = url;
+    }
+  }
+
+  doc
+    .save()
+    .then(() => {
+      Promise.allSettled([
+        ...galleryFilePaths.map((filepath, index) => {
+          if (publicIds.gallery[index]) {
+            return fs.promises.unlink(filepath);
+          }
+        }),
+        publicIds.coverImage && fs.promises.unlink(coverImagePath),
+        pdfFilePath && publicIds.pdfFile && fs.promises.unlink(pdfFilePath),
+      ]);
+    })
+    .catch(() => {
+      Promise.allSettled(
+        ...galleryFilePaths.map((val, index) =>
+          cloudinary.uploader.destroy(publicIds.gallery[index])
+        ),
+        cloudinary.uploader.destroy(publicIds.coverImage),
+        pdfFilePath && cloudinary.uploader.destroy(publicIds.pdfFile)
+      );
+    });
 };
 
 exports.getAllPosts = async (req, res, next) => {
