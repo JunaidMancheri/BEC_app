@@ -21,6 +21,7 @@ exports.validatorFactory = (schema) => {
 
 
 function parseError(error)  {
+  console.log(error)
   switch (error.keyword) {
     case 'required':
       return `${error.params.missingProperty} field is required.`;
@@ -30,6 +31,8 @@ function parseError(error)  {
       return `should not contain additional properties, found ${error.params.additionalProperty}`
     case 'enum':
       return `${error.message}, allowedValues: ${error.params.allowedValues}`
+    case 'format':
+      return `${error.instancePath.slice(1)} should be valid ${error.params.format}`
     default:
       return "Invalid data.";
   }

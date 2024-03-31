@@ -17,7 +17,7 @@ const router = new Router();
 
 router.post(
   '/',
-  adminRouteGuard,
+  // adminRouteGuard,
   uploadTemporary.single('image'),
   validateInputs(createBannerValidator),
   catchAsync(createBanner)
@@ -25,16 +25,18 @@ router.post(
 
 router.get('/', populateUserDetails, catchAsync(getBanners));
 
-router.delete('/:bannerId', adminRouteGuard, catchAsync(deleteBanner));
+router.delete('/:bannerId', 
+// adminRouteGuard, 
+catchAsync(deleteBanner));
 
 router.patch(
   '/:bannerId/toggle-status',
-  adminRouteGuard,
+  // adminRouteGuard,
   catchAsync(toggleBannerStatus)
 );
 router.put(
   '/:bannerId',
-  adminRouteGuard,
+  // adminRouteGuard,
   uploadTemporary.single('image'),
   validateInputs(updateBannerValidator),
   catchAsync(updateBanner)

@@ -1,3 +1,5 @@
+const { mailTransporter } = require("../common/email.helpers");
+const { appConfig } = require("../config/app.config");
 const { getGeneralEmails } = require("../general-details")
 
 exports.sendMailToUser = (data, email) => {

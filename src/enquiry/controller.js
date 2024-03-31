@@ -16,7 +16,9 @@ exports.createEnquiry = async (req, res) => {
     post: req.body.post,
     type: req.body.post ? 'specialized' : 'general',
   });
+  Logger.info('sending mail to the user ' + data.email);
   sendMailToUser(data,req.body.email);
+  Logger.info('sending mail to the admins');
   sendMailToAdmins(data)
 
   Logger.info('New Enquiry received' , {name: data.name, email: data.email});
@@ -24,7 +26,7 @@ exports.createEnquiry = async (req, res) => {
 };
 
 exports.getEnquiries = async (req, res) => {
-  const enquiries = await EnquiryModel.find();
+  const enquiries = await EnquiryModel.find().populate('course').populate('post');
   res.json(respondSuccess(enquiries));
 };
 

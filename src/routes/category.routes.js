@@ -34,7 +34,7 @@ router.put(
 
 router.patch(
   '/:categoryId/toggle-status',
-  adminRouteGuard,
+  // adminRouteGuard,
   catchAsync(toggleStatus)
 );
 
