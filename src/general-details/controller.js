@@ -1,6 +1,9 @@
+const { makeLogger } = require("../common/logger.config");
 const { respondSuccess } = require("../common/response.helper");
 const { setGeneralDetails, getGeneralDetails } = require("./general-details.in-memory");
 const { generalDetailsModel } = require("./general-details.model");
+
+const Logger =  makeLogger('General-Details');
 
 exports.updateGeneralDetails = async (req, res) => {
   const updates = {};
@@ -18,6 +21,8 @@ exports.updateGeneralDetails = async (req, res) => {
 
   await generalDetailsModel.findOneAndUpdate({}, updates);
   setGeneralDetails(updates);
+
+  Logger.info('general-details updated');
   res.json(respondSuccess(updates));
 }
 
