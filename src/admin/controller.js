@@ -3,7 +3,7 @@ const {sendInvitationMail} = require('./email.service');
 const {AdminModel} = require('./model');
 const {generateAndStoreToken} = require('../auth/token.service');
 const {Conflict} = require('http-errors');
-const { addToBlockList, removeFromBlockList } = require('../auth');
+const { addToBlockList, removeFromBlockList } = require('../auth/block-list.service');
 const { makeLogger } = require('../common/logger.config');
 
 const Logger = makeLogger('Admin');
