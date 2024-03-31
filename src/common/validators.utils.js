@@ -28,6 +28,8 @@ function parseError(error)  {
       return `${error.instancePath.slice(1)} should be type of ${error.params.type}`
     case 'additionalProperties':
       return `should not contain additional properties, found ${error.params.additionalProperty}`
+    case 'enum':
+      return `${error.message}, allowedValues: ${error.params.allowedValues}`
     default:
       return "Invalid data.";
   }

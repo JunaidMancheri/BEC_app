@@ -3,12 +3,13 @@ const { makeLogger } = require('../common/logger.config');
 const {respondSuccess} = require('../common/response.helper');
 const {generateSlug} = require('../common/slug.helper');
 const {CourseModel} = require('./model');
-const {Conflict} = require('http-errors');
+const {Conflict, BadRequest, NotFound} = require('http-errors');
 const {Types} = require('mongoose');
 
 const Logger = makeLogger('Course');
 
 exports.createCourse = async (req, res) => {
+  if (isNaN(Number(req.body.duration))) throw new BadRequest('duration should be a number');
   let doc;
   try {
     doc = await CourseModel.create({
@@ -46,13 +47,18 @@ exports.updateCourse = async (req, res) => {
     updates.nameSlug = generateSlug(req.body.name);
   }
   if (req.body.description) updates.description = req.body.description;
-  if (req.body.duration) updates.duration = Number(req.body.duration);
+  if (req.body.duration) {
+    if (isNaN(Number(req.body.duration))) throw  new BadRequest('duration should be of type number')
+    updates.duration = Number(req.body.duration);
+  }
   if (req.body.type) updates.type = req.body.type;
   let doc;
   try {
     doc = await CourseModel.findByIdAndUpdate(req.params.courseId, updates, {
       new: true,
-    });
+    })
+
+    if  (!doc) throw new NotFound('Course not found');
   } catch (error) {
     if (error.code === 11000) {
       throw new Conflict('Course with this name already exists');
@@ -103,5 +109,6 @@ exports.getCourseAndProvidingColleges = async (req, res) => {
     }
   ];
   const result = await CourseModel.aggregate(pipeline);
+  if (!result[0]) throw new NotFound('Course not found');
   res.json(respondSuccess(result[0]));
 }
