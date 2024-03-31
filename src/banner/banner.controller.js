@@ -1,4 +1,4 @@
-const {BadRequest} = require('http-errors');
+const {BadRequest, NotFound} = require('http-errors');
 const {BannerModel} = require('./banner.model');
 const {generateFilename} = require('../common/upload.helper');
 const {respondSuccess} = require('../common/response.helper');
@@ -15,15 +15,14 @@ exports.createBanner = async (req, res, next) => {
   if (!req.file) throw new BadRequest('image is required');
 
   const filename = generateFilename(req.file.mimetype);
-  const fileUrl = join(appConfig.APP_BASE_URL, 'uploads', 'banners', filename);
-  const filePath = join('public', fileUrl);
+  const filePath = join('public', 'uploads', 'banners', filename);
   await fs.promises.writeFile(filePath, req.file.buffer);
 
   const doc = await BannerModel.create({
     description: req.body.description,
     title: req.body.title,
     link: req.body.link,
-    imageUrl: fileUrl,
+    imageUrl: `${appConfig.APP_BASE_URL}/uploads/banners/${filename}`,
     isActive: true,
   });
 
@@ -38,6 +37,7 @@ exports.createBanner = async (req, res, next) => {
       doc.imageUrl = info.url;
       await doc.save();
       fs.promises.unlink(filePath).catch(() => {});
+      Logger.info('Upload banner to cloudinary ' + doc._id)
     } catch (error) {
       cloudinary.uploader.destroy(info.public_id).catch(() => {});
     }
@@ -60,8 +60,10 @@ exports.deleteBanner = async (req, res, next) => {
   res.status(204).end();
   if (isCloudinaryUrl(doc.imageUrl)) {
     cloudinary.uploader.destroy(getPublicId(doc.imageUrl)).catch(() => {});
+    Logger.info('removed old banner image from cloudinary ' + doc._id);
   } else {
     fs.promises.unlink(extractFilePathFromUrl(doc.imageUrl)).catch(() => {});
+    Logger.info('removed old banner image from disk ' + doc._id);
   }
 };
 
@@ -70,7 +72,7 @@ exports.toggleBannerStatus = async (req, res, next) => {
   doc.isActive = !doc.isActive;
   await doc.save();
   Logger.info('status changed to  ' + doc.isActive + ' ' + doc._id );
-  res.status(204).end();
+  res.json(respondSuccess(doc)).end();
 };
 
 exports.updateBanner = async (req, res) => {
@@ -79,6 +81,7 @@ exports.updateBanner = async (req, res) => {
   }
 
   const doc = await BannerModel.findById(req.params.bannerId);
+  if (!doc) throw new NotFound('Banner not  found');
   if (req.body.title) {
     doc.title = req.body.title;
   }
@@ -93,10 +96,10 @@ exports.updateBanner = async (req, res) => {
   let filePath;
   let oldfileUrl = doc.imageUrl;
   if (req.file) {
-    const url = `${appConfig.APP_BASE_URL}/uploads/banners/${generateFilename(req.file.mimetype)}`;
-    filePath = join('public', url);
+    const filename = generateFilename(req.file.mimetype);
+    filePath = join('public', 'uploads', 'banners', filename);
     await fs.promises.writeFile(filePath, req.file.buffer);
-    doc.imageUrl = url;
+    doc.imageUrl = `${appConfig.APP_BASE_URL}/uploads/banners/${filename}`;
   }
 
   await doc.save();
@@ -111,12 +114,15 @@ exports.updateBanner = async (req, res) => {
         doc.imageUrl = info.url;
         await doc.save();
         fs.promises.unlink(filePath).catch(() => {});
+        Logger.info('uploaded updated banner image to cloudinary ' + doc._id);
         if (isCloudinaryUrl(oldfileUrl)) {
           cloudinary.uploader.destroy(getPublicId(oldfileUrl)).catch(() => {});
+          Logger.info('removed old banner image from cloudinary ' + doc._id);
         } else {
           fs.promises
             .unlink(extractFilePathFromUrl(oldfileUrl))
             .catch(err => {});
+            Logger.info('removed old banner image from disk ' + doc._id);
         }
       } catch (error) {
         cloudinary.uploader.destroy(info.public_id).catch(() => {});

@@ -22,6 +22,7 @@ async function ensureUploadFoldersExists() {
     join(uploadRootFolder, 'pdf'),
     join(uploadRootFolder, 'amenities'),
     join(uploadRootFolder, 'categories'),
+    join(uploadRootFolder, 'banners'),
   ];
 
   for (const path of foldersPaths) {
