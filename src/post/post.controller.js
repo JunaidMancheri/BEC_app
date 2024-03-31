@@ -57,11 +57,11 @@ exports.createPost = async (req, res) => {
     gallery,
     isActive: true,
     title: req.body['title'],
-    courses: req.body['courses'],
     category: req.body['category'],
-    amenities: req.body['amenities'],
     description: req.body['description'],
     contactNumber: req.body['contactNumber'],
+    courses: Array.from(new Set(req.body['courses'])),
+    amenities: Array.from(new Set(req.body['amenities'])),
     coverImageUrl: `${appConfig.APP_BASE_URL}/uploads/posts/${coverImageName}`,
     isCategoryActive: await getCategoryStatus(req.body['category']),
     brochureUrl: pdfFilename
@@ -128,7 +128,8 @@ exports.createPost = async (req, res) => {
 exports.getAllPosts = async (req, res, next) => {
   const posts = await PostModel.find()
     .populate('amenities')
-    .populate('courses');
+    .populate('courses')
+    .populate('category')
   return res.json(respondSuccess(posts));
 };
 
@@ -141,7 +142,8 @@ exports.getPostsOfACategory = async (req, res, next) => {
     ...filter,
   })
     .populate('amenities')
-    .populate('courses');
+    .populate('courses')
+    .populate('category')
   return res.json(respondSuccess(posts));
 };
 
@@ -161,7 +163,8 @@ exports.getSinglePost = async (req, res, next) => {
 
   const post = await PostModel.findById(req.params.postId, filter)
     .populate('amenities')
-    .populate('courses');
+    .populate('courses')
+    .populate('category');
   return res.json(respondSuccess(post));
 };
 
@@ -183,11 +186,11 @@ exports.updatePostDetails = async (req, res, next) => {
   }
 
   if (req.body.amenities) {
-    updates.amenities = req.body.amenities;
+    updates.amenities = Array.from(new Set(req.body.amenities));
   }
 
   if (req.body.courses) {
-    updates.courses = req.body.courses;
+    updates.courses = Array.from(new Set(req.body.courses));
   }
 
   if (req.body.category) {
