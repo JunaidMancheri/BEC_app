@@ -15,6 +15,10 @@ const {
   getPublicId,
 } = require('../common/cloudinary.service');
 const {extractFilePathFromUrl} = require('../common/utils');
+const { makeLogger } = require('../common/logger.config');
+
+
+const Logger =  makeLogger('Post');
 
 /**
  * @type {import("../..").ExpressController}
@@ -65,6 +69,9 @@ exports.createPost = async (req, res) => {
       : undefined,
   });
 
+
+  Logger.info('Created post ' + doc.title);
+
   res.status(201).json(respondSuccess(doc)).end();
 
   const promises = [
@@ -72,6 +79,8 @@ exports.createPost = async (req, res) => {
     cloudinary.uploader.upload(coverImagePath),
   ];
   const results = await Promise.allSettled(promises);
+
+  Logger.info('Uploaded images  to cloudinary for post ' +  doc.title);
 
   const publicIds = {
     gallery: [null, null, null, null],
@@ -94,6 +103,7 @@ exports.createPost = async (req, res) => {
   doc
     .save()
     .then(() => {
+
       Promise.allSettled([
         ...galleryFilePaths.map((filepath, index) => {
           if (publicIds.gallery[index]) {
@@ -102,6 +112,7 @@ exports.createPost = async (req, res) => {
         }),
         publicIds.coverImage && fs.promises.unlink(coverImagePath),
       ]);
+      Logger.info('cleaned up disk space of  locally saved images for  post ' + doc.title);
     })
     .catch(() => {
       Promise.allSettled([
@@ -110,6 +121,7 @@ exports.createPost = async (req, res) => {
         ),
         cloudinary.uploader.destroy(publicIds.coverImage),
       ]);
+      Logger.info('db failed to save  updates... deleting files from cloudinary for post ' + doc.title);
     });
 };
 
@@ -183,6 +195,8 @@ exports.updatePostDetails = async (req, res, next) => {
   }
 
   const doc = await PostModel.findByIdAndUpdate(req.params.postId, updates);
+
+  Logger.info('Details updated for the post ' + req.params.postId);
   return res.json(respondSuccess(doc));
 };
 
@@ -216,6 +230,8 @@ exports.addPostGalleryImages = async (req, res, next) => {
 
   postDoc.gallery = [...postDoc.gallery, ...gallery];
   await postDoc.save();
+
+  Logger.info('Added new gallery images for the post ' + postDoc.title);
   res.json(respondSuccess(postDoc));
 
   const promises = [
@@ -223,6 +239,8 @@ exports.addPostGalleryImages = async (req, res, next) => {
   ];
 
   const results = await Promise.allSettled(promises);
+
+  Logger.info('Gallery images uploaded  to cloudinary for post ' + postDoc.title);
 
   const publicIds = [];
 
@@ -258,6 +276,8 @@ exports.deleteGalleryImage = async (req, res, next) => {
   const postDoc = await PostModel.findById(req.params.postId);
   const url = postDoc.gallery.splice(Number(req.params.index), 1);
   await postDoc.save();
+
+  Logger.info('gallery image deleted for post ' + postDoc.title);
   res.status(204).end();
   if (isCloudinaryUrl(url)) {
     cloudinary.uploader.destroy(getPublicId(url)).catch(() => {});
@@ -279,6 +299,8 @@ exports.addBrochure = async (req, res, next) => {
   );
   postDoc.brochureUrl = `/uploads/pdf/${pdfFilename}`;
   await postDoc.save();
+
+  Logger.info('Brochure added for post  ' + postDoc.title);
   res.status(201).end();
 };
 
@@ -288,6 +310,8 @@ exports.deleteBrochure = async (req, res, next) => {
     fs.promises.unlink(join('public', postDoc.brochureUrl));
     postDoc.brochureUrl = undefined;
     await postDoc.save();
+
+    Logger.info('Brochure deleted for post  ' + postDoc.title);
   }
   res.status(204).end();
 };
@@ -309,6 +333,8 @@ exports.updateCoverImage = async (req, res, next) => {
   postDoc.coverImageUrl = `${appConfig.APP_BASE_URL}/uploads/posts/${filename}`;
   await fs.promises.writeFile(filePath, req.file.buffer);
   await postDoc.save();
+
+  Logger.info('Updated cover image for post ' + postDoc.title);
   res.status(200).end();
 
   cloudinary.uploader.upload(filePath, async (err, info) => {
@@ -333,11 +359,15 @@ exports.toggleStatus = async (req, res, next) => {
   const postDoc = await PostModel.findById(req.params.id);
   postDoc.isActive = !postDoc.isActive;
   await postDoc.save();
+
+  Logger.info('Status changed to ' + postDoc.isActive + ' for post ' + postDoc.title);
   res.json(respondSuccess(postDoc));
 };
 
 exports.deletePost = async (req, res, next) => {
   const doc = await PostModel.findByIdAndDelete(req.params.postId);
+
+  Logger.info('Post deleted ' + doc.title);
   res.status(204).end();
 
   if (!doc) return;
@@ -352,13 +382,12 @@ exports.deletePost = async (req, res, next) => {
 
   Promise.allSettled(
     filesToDelete.map(async ({url, isCloudinary}) => {
-      console.log(url, isCloudinary);
       if (isCloudinary) {
         return cloudinary.uploader.destroy(getPublicId(url));
       } else {
         return fs.promises.unlink(extractFilePathFromUrl(url));
       }
-    })
+    }).then(() => Logger.info('Cleaned up post files ' + doc.title))
   );
 };
 
