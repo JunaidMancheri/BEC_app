@@ -2,7 +2,7 @@ const {respondSuccess} = require('../common/response.helper');
 const {generateFilename} = require('../common/upload.helper');
 const {generateSlug} = require('../common/slug.helper');
 const {categoryModel} = require('./category.model');
-const {Conflict, BadRequest} = require('http-errors');
+const {Conflict, BadRequest, NotFound} = require('http-errors');
 const {join} = require('path');
 const fs = require('fs');
 const {EventEmitter} = require('../common/EventEmitter');
@@ -74,6 +74,8 @@ exports.updateCategory = async (req, res, next) => {
   }
 
   const doc = await categoryModel.findById(req.params.categoryId);
+
+  if (!doc) throw new NotFound('Category not found');
   if (req.body.name) {
     doc.name = req.body.name;
     doc.nameSlug = generateSlug(req.body.name);
@@ -125,6 +127,8 @@ exports.updateCategory = async (req, res, next) => {
 
 exports.toggleStatus = async (req, res, next) => {
   const doc = await categoryModel.findById(req.params.categoryId);
+
+  if (!doc) throw new NotFound('Category not found');
   doc.isActive = !doc.isActive;
   await doc.save();
   EventEmitter.emit('Category:StatusChanged', {
@@ -133,5 +137,5 @@ exports.toggleStatus = async (req, res, next) => {
   });
   
   Logger.info('Category status changed to ' + doc.isActive + ' ' + doc._id);
-  res.json(respondSuccess(newDoc));
+  res.json(respondSuccess(doc));
 };
