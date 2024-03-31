@@ -13,6 +13,9 @@ const {
   getPublicId,
 } = require('../common/cloudinary.service');
 const {extractFilePathFromUrl} = require('../common/utils');
+const {makeLogger} = require('../common/logger.config');
+
+const Logger = makeLogger('Amenity');
 
 /**
  * @type {import("../..").ExpressController}
@@ -35,6 +38,8 @@ exports.createAmenity = async (req, res, next) => {
 
   const filePath = join('public', 'uploads', 'amenities', filename);
   await fs.promises.writeFile(filePath, req.file.buffer);
+
+  Logger.info('created ' + doc.name);
 
   res.json(respondSuccess(doc)).end();
 
@@ -78,7 +83,9 @@ exports.updateAmenity = async (req, res) => {
     const response = await doc.save({new: true});
     if (req.file) {
       await fs.promises.writeFile(filePath, req.file.buffer);
-    }
+    }  
+
+    Logger.info('Updated ' + doc._id);
 
     res.json(respondSuccess(response)).end();
   } catch (error) {
@@ -111,14 +118,14 @@ exports.updateAmenity = async (req, res) => {
 
 exports.deleteAmenity = async (req, res, next) => {
   const doc = await amenityModel.findByIdAndDelete(req.params.amenityId);
-  
+   
+  Logger.info('Deleted ' + doc._id);
   res.status(204).end();
-  
+
   EventEmitter.emit('Amenity:Deleted', {amenityId: req.params.amenityId});
   if (isCloudinaryUrl(doc.imageUrl)) {
     cloudinary.uploader.destroy(getPublicId(doc.imageUrl)).catch(() => {});
   } else {
     fs.promises.unlink(extractFilePathFromUrl(doc.imageUrl)).catch(() => {});
   }
-
 };
