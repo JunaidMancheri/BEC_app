@@ -1,9 +1,12 @@
 const {EventEmitter} = require('../common/EventEmitter');
+const { makeLogger } = require('../common/logger.config');
 const {respondSuccess} = require('../common/response.helper');
 const {generateSlug} = require('../common/slug.helper');
 const {CourseModel} = require('./model');
 const {Conflict} = require('http-errors');
 const {Types} = require('mongoose');
+
+const Logger = makeLogger('Course');
 
 exports.createCourse = async (req, res) => {
   let doc;
@@ -21,6 +24,8 @@ exports.createCourse = async (req, res) => {
     }
     throw error;
   }
+
+  Logger.info('Created ' + doc.name);
   res.json(respondSuccess(doc)).status(201);
 };
 
@@ -54,12 +59,16 @@ exports.updateCourse = async (req, res) => {
     }
     throw error;
   }
+
+  Logger.info('updated course ' +  doc.name);
   res.json(respondSuccess(doc));
 };
 
 exports.deleteCourse = async (req, res) => {
   await CourseModel.findByIdAndDelete(req.params.courseId);
   EventEmitter.emit('Course:Deleted', {courseId: req.params.courseId});
+
+  Logger.info('deleted  course ' + req.params.courseId);
   res.status(204).end();
 };
 
