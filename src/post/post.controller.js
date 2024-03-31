@@ -1,4 +1,4 @@
-const {BadRequest, Conflict} = require('http-errors');
+const {BadRequest, Conflict, NotFound} = require('http-errors');
 const {PostModel} = require('./post.model');
 const {getCategoryStatus} = require('../category');
 const {
@@ -161,7 +161,7 @@ exports.getSinglePost = async (req, res, next) => {
   let filter = {isActive: true, isCategoryActive: true};
   if (req.user?.isAdmin) filter = {};
 
-  const post = await PostModel.findById(req.params.postId, filter)
+  const post = await PostModel.findOne({_id: req.params.postId,...filter})
     .populate('amenities')
     .populate('courses')
     .populate('category');
@@ -197,8 +197,8 @@ exports.updatePostDetails = async (req, res, next) => {
     updates.category = req.body.category;
   }
 
-  const doc = await PostModel.findByIdAndUpdate(req.params.postId, updates);
-
+  const doc = await PostModel.findByIdAndUpdate(req.params.postId, updates, {new: true});
+  if (!doc) throw new NotFound('Post not found');
   Logger.info('Details updated for the post ' + req.params.postId);
   return res.json(respondSuccess(doc));
 };
@@ -208,16 +208,17 @@ exports.addPostGalleryImages = async (req, res, next) => {
     throw new BadRequest('gallery images are required');
   }
 
-  if (!req.files.length > 4) {
+  if (req.files.length > 4) {
     throw new BadRequest('Gallery can contain only up to 4 images');
   }
 
-  const postDoc = await PostModel.findById(req.params.postId, '-_id gallery');
+  const postDoc = await PostModel.findById(req.params.postId, 'gallery');
+  if (!postDoc) throw new NotFound('Post not found');
 
-  const currentGalleryLength = postDoc.gallery.length;
+  const currentGalleryLength = postDoc.gallery.length
   if (currentGalleryLength + req.files.length > 4) {
     throw new BadRequest(
-      `Can't add ${req.files.length} more images, since gallery already contains ${postDoc.gallery.lenght} images and a maximum number of 4 images are only allowed`
+      `Can't add ${req.files.length} more images, since gallery already contains ${postDoc.gallery.length} images and a maximum number of 4 images are only allowed`
     );
   }
 
@@ -260,16 +261,17 @@ exports.addPostGalleryImages = async (req, res, next) => {
     .then(() => {
       Promise.allSettled([
         ...galleryFilePaths.map((filepath, index) => {
-          if (publicIds.gallery[index]) {
+          if (publicIds[index]) {
             return fs.promises.unlink(filepath);
           }
         }),
       ]);
     })
-    .catch(() => {
+    .catch((err) => {
+      Logger.error(err.message);
       Promise.allSettled([
         ...galleryFilePaths.map((val, index) =>
-          cloudinary.uploader.destroy(publicIds.gallery[index])
+          cloudinary.uploader.destroy(publicIds[index])
         ),
       ]);
     });
@@ -277,40 +279,45 @@ exports.addPostGalleryImages = async (req, res, next) => {
 
 exports.deleteGalleryImage = async (req, res, next) => {
   const postDoc = await PostModel.findById(req.params.postId);
-  const url = postDoc.gallery.splice(Number(req.params.index), 1);
+  if (!postDoc) throw new NotFound('Post not found');
+  const urls = postDoc.gallery.splice(Number(req.params.index), 1);
   await postDoc.save();
 
   Logger.info('gallery image deleted for post ' + postDoc.title);
   res.status(204).end();
-  if (isCloudinaryUrl(url)) {
-    cloudinary.uploader.destroy(getPublicId(url)).catch(() => {});
+
+  if (urls.length ==0) return; 
+  if (isCloudinaryUrl(urls[0])) {
+    cloudinary.uploader.destroy(getPublicId(urls[0])).catch(() => {});
   } else {
-    fs.promises.unlink(extractFilePathFromUrl(url)).catch(() => {});
+    fs.promises.unlink(extractFilePathFromUrl(urls[0])).catch(() => {});
   }
 };
 
 exports.addBrochure = async (req, res, next) => {
   if (!req.file) throw new BadRequest('brochureFile is required');
   const postDoc = await PostModel.findById(req.params.postId);
+  if (!postDoc) throw new NotFound('Post not found');
   if (postDoc.brochureUrl) {
     throw new Conflict('A brochure has already been added');
   }
   const pdfFilename = generatePdfFilename();
-  fs.promises.writeFile(
+  await fs.promises.writeFile(
     join('public', 'uploads', 'pdf', pdfFilename),
     req.file.buffer
   );
-  postDoc.brochureUrl = `/uploads/pdf/${pdfFilename}`;
+  postDoc.brochureUrl = `${appConfig.APP_BASE_URL}/uploads/pdf/${pdfFilename}`;
   await postDoc.save();
 
   Logger.info('Brochure added for post  ' + postDoc.title);
-  res.status(201).end();
+  res.json(respondSuccess(postDoc)).status(201).end();
 };
 
 exports.deleteBrochure = async (req, res, next) => {
   const postDoc = await PostModel.findById(req.params.postId);
+  if (!postDoc) throw new NotFound('Post not found');
   if (postDoc.brochureUrl) {
-    fs.promises.unlink(join('public', postDoc.brochureUrl));
+    fs.promises.unlink(extractFilePathFromUrl(postDoc.brochureUrl)).catch(()=>{});
     postDoc.brochureUrl = undefined;
     await postDoc.save();
 
@@ -326,8 +333,10 @@ exports.updateCoverImage = async (req, res, next) => {
 
   const postDoc = await PostModel.findById(
     req.params.postId,
-    '-_id coverImageUrl'
+    'coverImageUrl'
   );
+
+  if (!postDoc) throw new NotFound('Post not found');
 
   const oldFileUrl = postDoc.coverImageUrl;
 
@@ -337,8 +346,8 @@ exports.updateCoverImage = async (req, res, next) => {
   await fs.promises.writeFile(filePath, req.file.buffer);
   await postDoc.save();
 
-  Logger.info('Updated cover image for post ' + postDoc.title);
-  res.status(200).end();
+  Logger.info('Updated cover image for post ' + postDoc._id);
+  res.json(respondSuccess(postDoc)).end();
 
   cloudinary.uploader.upload(filePath, async (err, info) => {
     try {
@@ -359,7 +368,8 @@ exports.updateCoverImage = async (req, res, next) => {
 };
 
 exports.toggleStatus = async (req, res, next) => {
-  const postDoc = await PostModel.findById(req.params.id);
+  const postDoc = await PostModel.findById(req.params.postId);
+  if (!postDoc) throw new NotFound('Post not found');
   postDoc.isActive = !postDoc.isActive;
   await postDoc.save();
 
@@ -390,8 +400,8 @@ exports.deletePost = async (req, res, next) => {
       } else {
         return fs.promises.unlink(extractFilePathFromUrl(url));
       }
-    }).then(() => Logger.info('Cleaned up post files ' + doc.title))
-  );
+    })
+  ).then(() => Logger.info('Cleaned up post files ' + doc.title));
 };
 
 exports.getPostsProvidingACourse = async (req, res) => {
