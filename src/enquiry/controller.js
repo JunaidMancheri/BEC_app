@@ -1,6 +1,9 @@
+const { makeLogger } = require('../common/logger.config');
 const {respondSuccess} = require('../common/response.helper');
 const { sendMailToUser, sendMailToAdmins } = require('./email.service');
 const {EnquiryModel} = require('./model');
+
+const Logger  = makeLogger('Enquiry');
 
 exports.createEnquiry = async (req, res) => {
   const data = await EnquiryModel.create({
@@ -15,6 +18,8 @@ exports.createEnquiry = async (req, res) => {
   });
   sendMailToUser(data,req.body.email);
   sendMailToAdmins(data)
+
+  Logger.info('New Enquiry received' , {name: data.name, email: data.email});
   res.end();
 };
 
@@ -25,5 +30,6 @@ exports.getEnquiries = async (req, res) => {
 
 exports.deleteEnquiry = async (req, res) => {
   await EnquiryModel.findByIdAndDelete(req.params.enquiryId);
+  Logger.info('Deleted ' + req.params.enquiryId);
   res.status(204).end();
 };
