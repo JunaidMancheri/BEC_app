@@ -11,6 +11,7 @@ const appConfig = {
   CLOUDINARY_CLOUD_NAME: undefined,
   CLOUDINARY_API_KEY: undefined,
   CLOUDINARY_API_SECRET: undefined,
+  FRONTEND_BASE_URL: undefined,
 };
 
 const loadAppConfig = async function () {

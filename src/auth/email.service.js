@@ -7,7 +7,7 @@ exports.sendResetPasswordLink = (email, token) => {
       to: email,
       subject: `${appConfig.APP_NAME} Password reset`,
       html: `
-       <a href=http://localhost:3000/auth/password-reset/${token}>Click here</a> 
+       <a href=${appConfig.FRONTEND_BASE_URL}/auth/password-reset/${token}>Click here</a> 
        reset your account password 
       `,
     }, (err, info) => {
