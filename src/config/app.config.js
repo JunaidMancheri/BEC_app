@@ -1,13 +1,16 @@
 const {MainLogger} = require('../common/logger.config');
 
 const appConfig = {
-  MONGODB_URL: 'mongodb://127.0.0.1:27017/bec',
   PORT: 3000,
-  APP_BASE_URL: 'http://localhost:3000',
   APP_NAME: 'BEC',
+  MONGODB_URL: undefined,
+  APP_BASE_URL: undefined,
   APP_EMAIL: undefined,
   APP_EMAIL_PASSWORD: undefined,
   JWT_SECRET_KEY: undefined,
+  CLOUDINARY_CLOUD_NAME: undefined,
+  CLOUDINARY_API_KEY: undefined,
+  CLOUDINARY_API_SECRET: undefined,
 };
 
 const loadAppConfig = async function () {
