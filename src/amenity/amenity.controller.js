@@ -1,7 +1,7 @@
 const {respondSuccess} = require('../common/response.helper');
 const {generateFilename} = require('../common/upload.helper');
 const {generateSlug} = require('../common/slug.helper');
-const {Conflict, BadRequest} = require('http-errors');
+const {Conflict, BadRequest, NotFound} = require('http-errors');
 const {join} = require('path');
 const fs = require('fs');
 const {amenityModel} = require('./amenity.model');
@@ -64,8 +64,8 @@ exports.updateAmenity = async (req, res) => {
   if (!req.body.name && !req.file) {
     return res.status(204).end();
   }
-
   const doc = await amenityModel.findById(req.params.amenityId);
+  if (!doc) throw new NotFound('Amenity not found');
   if (req.body.name) {
     doc.name = req.body.name;
     doc.nameSlug = generateSlug(req.body.name);
