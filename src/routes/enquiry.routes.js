@@ -13,12 +13,8 @@ const router = Router();
 
 router.post('/', validateInputs(enquiryValidator), catchAsync(createEnquiry));
 
-router.get('/', 
-// adminRouteGuard, 
-catchAsync(getEnquiries));
+router.get('/', adminRouteGuard, catchAsync(getEnquiries));
 
-router.delete('/:enquiryId', 
-// adminRouteGuard, 
-catchAsync(deleteEnquiry));
+router.delete('/:enquiryId', adminRouteGuard, catchAsync(deleteEnquiry));
 
 exports.enquiryRoutes = router;

@@ -25,7 +25,7 @@ const router = Router();
 
 router.post(
   '/',
-  // adminRouteGuard,
+  adminRouteGuard,
   uploadTemporary.fields([
     {
       name: 'brochureFile',
@@ -38,9 +38,7 @@ router.post(
   catchAsync(createPost)
 );
 
-router.get('/',
-//  adminRouteGuard, 
- catchAsync(getAllPosts));
+router.get('/', adminRouteGuard, catchAsync(getAllPosts));
 router.get(
   '/category/:categoryId',
   populateUserDetails,
@@ -51,47 +49,45 @@ router.get('/:postId', populateUserDetails, catchAsync(getSinglePost));
 
 router.get('/course/:courseId', catchAsync(getPostsProvidingACourse));
 
-router.put('/:postId/details', 
-// adminRouteGuard, 
-validateInputs(updatePostValidator),
-catchAsync(updatePostDetails));
+router.put(
+  '/:postId/details',
+  adminRouteGuard,
+  validateInputs(updatePostValidator),
+  catchAsync(updatePostDetails)
+);
 router.post(
   '/:postId/gallery',
-  // adminRouteGuard,
+  adminRouteGuard,
   uploadTemporary.array('gallery'),
   catchAsync(addPostGalleryImages)
 );
 router.delete(
   '/:postId/gallery/:index',
-  // adminRouteGuard,
+  adminRouteGuard,
   catchAsync(deleteGalleryImage)
 );
 
 router.post(
   '/:postId/brochure',
-  // adminRouteGuard,
+  adminRouteGuard,
   uploadTemporary.single('brochureFile'),
   catchAsync(addBrochure)
 );
 
-router.delete('/:postId/brochure', 
-// adminRouteGuard, 
-catchAsync(deleteBrochure));
+router.delete('/:postId/brochure', adminRouteGuard, catchAsync(deleteBrochure));
 
 router.put(
   '/:postId/coverImage',
-  // adminRouteGuard,
+  adminRouteGuard,
   uploadTemporary.single('coverImage'),
   catchAsync(updateCoverImage)
 );
 
 router.patch(
   '/:postId/toggle-status',
-  // adminRouteGuard,
+  adminRouteGuard,
   catchAsync(toggleStatus)
 );
 
-router.delete('/:postId', 
-// adminRouteGuard, 
-catchAsync(deletePost));
+router.delete('/:postId', adminRouteGuard, catchAsync(deletePost));
 exports.postRoutes = router;
