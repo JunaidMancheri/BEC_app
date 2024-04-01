@@ -14,10 +14,12 @@ exports.validateToken = (token, email) => {
   for (const [key, value] of Object.entries(tokens.invitation)) {
     if (token === value.token) {
       const now = Date.now();
-      if (now > value.expirestAt)
+      if (now > value.expirestAt) {
+        delete tokens.invitation[key];
         throw new Forbidden(
           'token expired, please ask admin to generate new link'
         );
+      }
       return key;
     }
   }
@@ -56,14 +58,26 @@ exports.generateToken = function () {
   });
 }
 
+
+exports.deleteInvitationToken = (email) => {
+  delete tokens.invitation[email];
+}
+
+exports.deleteResetPasswordToken = (email) => {
+  delete tokens.resetPassword[email];
+}
+
 exports.validateResetPasswordToken = function (token) {
   for (const [key, value] of Object.entries(tokens.resetPassword)) {
     if (token === value.token) {
       const now = Date.now();
-      if (now > value.expirestAt)
+      if (now > value.expirestAt) {
+        delete tokens.resetPassword[key];
         throw new Forbidden(
           'token expired, please ask admin to generate new link'
         );
+      }
+
       return key;
     }
   }

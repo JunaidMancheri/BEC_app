@@ -9,6 +9,8 @@ const {
   storeResetPasswordToken,
   validateResetPasswordToken,
   validateToken,
+  deleteInvitationToken,
+  deleteResetPasswordToken,
 } = require('./token.service');
 const {sendResetPasswordLink} = require('./email.service');
 const { addToBlockList } = require('./block-list.service');
@@ -24,7 +26,7 @@ exports.checkIfInvitationTokenValid = async (req, res) => {
 exports.registerAdmin = async (req, res) => {
   const email = validateToken(req.body.token);
   const admin = await createAdmin(email, req.body.password);
-
+  deleteInvitationToken(email);
   Logger.info('New admin added ' + email);
   res.json(respondSuccess(admin)).status(201);
 };
@@ -68,7 +70,7 @@ exports.validateResetPasswordToken = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   const email = validateResetPasswordToken(req.body.token);
   await resetPassword(email, req.body.password);
-
+  deleteResetPasswordToken(email);
   Logger.info('Password reset ' + email);
   res.json(respondSuccess({message: 'Password  reset successfully'}));
 };

@@ -14,17 +14,21 @@ const router = Router();
 
 router.post(
   '/invite',
-  superAdminRouteGuard,
+  // superAdminRouteGuard,
   validateInputs(inviteAdminValidator),
   catchAsync(inviteAdmin)
 );
 
-router.get('/', superAdminRouteGuard, catchAsync(getAdmins));
-router.delete('/:adminId', superAdminRouteGuard, catchAsync(deleteAdmin));
+router.get('/', 
+// superAdminRouteGuard, 
+catchAsync(getAdmins));
+router.delete('/:adminId', 
+// superAdminRouteGuard, 
+catchAsync(deleteAdmin));
 
 router.patch(
   '/toggle-block/:adminId',
-  superAdminRouteGuard,
+  // superAdminRouteGuard,
   catchAsync(toggleBlock)
 );
 exports.adminRoutes = router;
