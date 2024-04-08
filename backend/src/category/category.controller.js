@@ -18,7 +18,7 @@ const { makeLogger } = require('../common/logger.config');
 const Logger = makeLogger('Category');
 
 /**
- * @type {import("../..").ExpressController}
+ * @type {import("../../backend").ExpressController}
  */
 exports.createCategoryController = async (req, res, next) => {
   if (!req.file) throw new BadRequest('image is required');
@@ -56,7 +56,7 @@ exports.createCategoryController = async (req, res, next) => {
 };
 
 /**
- * @type {import("../..").ExpressController}
+ * @type {import("../../backend").ExpressController}
  */
 exports.getCategories = async (req, res, next) => {
   let filter = {isActive: true};
@@ -66,7 +66,7 @@ exports.getCategories = async (req, res, next) => {
 };
 
 /**
- * @type {import("../..").ExpressController}
+ * @type {import("../../backend").ExpressController}
  */
 exports.updateCategory = async (req, res, next) => {
   if (!req.body.name && !req.file) {
