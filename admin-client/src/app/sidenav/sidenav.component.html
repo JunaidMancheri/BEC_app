@@ -1,0 +1,25 @@
+<mat-toolbar class="mat-elevation-z3 fixed z-10">
+  <button mat-icon-button (click)="collapsed.set(!collapsed())"> <mat-icon>menu</mat-icon></button>
+</mat-toolbar>
+<mat-drawer-container [hasBackdrop]="false" class="h-screen pt-16">
+  <mat-drawer #drawer mode="push" class="transition-all ease-in-out" opened [style.width]="sidenavWidth()">
+    <div class="h-screen pt-16">
+      <mat-nav-list>
+        @for(item of navItems; track item.route) {
+          <a mat-list-item [routerLink]="item.route" 
+          routerLinkActive="menu-item-selected" #rla="routerLinkActive"
+           class="menu-item"
+           [matTooltipDisabled]="!collapsed()"
+            [matTooltip]="item.title"
+            [activated]="rla.isActive">
+            <mat-icon [fontSet]="rla.isActive ? 'material-icons' : 'material-icons-outlined'" matListItemIcon>{{item.icon}}</mat-icon>
+            <span matListItemTitle>{{item.title}}</span>
+          </a>
+        }
+      </mat-nav-list>
+    </div>
+  </mat-drawer>
+  <mat-drawer-content class="transition-all ease-in-out " [style.margin-left]="sidenavWidth()">
+    <router-outlet></router-outlet>
+  </mat-drawer-content>
+</mat-drawer-container>
