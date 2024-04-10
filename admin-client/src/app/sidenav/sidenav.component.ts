@@ -25,7 +25,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 })
 export class SidenavComponent {
   collapsed = signal(true);
-  sidenavWidth = computed(() => this.collapsed() ? '3.5rem' : '12rem')
+  sidenavWidth = computed(() => this.collapsed() ? '3.6rem' : '12rem')
   navItems = [
     {
       route: 'categories',
