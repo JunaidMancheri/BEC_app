@@ -6,6 +6,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { SharedModule } from '../shared/shared.module';
 
 export interface Category {
  _id: string,
@@ -17,7 +18,7 @@ export interface Category {
 @Component({
   selector: 'app-categoy',
   standalone: true,
-  imports: [MatTableModule, MatButtonModule, MatIconModule, MatChipsModule, MatSlideToggleModule],
+  imports: [MatTableModule, MatButtonModule, MatIconModule, MatChipsModule, MatSlideToggleModule, SharedModule],
   templateUrl: './categoy.component.html',
   styleUrl: './categoy.component.css'
 })
