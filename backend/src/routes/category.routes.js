@@ -16,7 +16,7 @@ const router = Router();
 
 router.post(
   '/',
-  adminRouteGuard,
+  // adminRouteGuard,
   uploadTemporary.single('image'),
   validateInputs(categoryDtoValidator),
   catchAsync(createCategoryController)
@@ -26,7 +26,7 @@ router.get('/', populateUserDetails, catchAsync(getCategories));
 
 router.put(
   '/:categoryId',
-  adminRouteGuard,
+  // adminRouteGuard,
   uploadTemporary.single('image'),
   validateInputs(updateCategoryDtoSchema),
   catchAsync(updateCategory)
@@ -34,7 +34,7 @@ router.put(
 
 router.patch(
   '/:categoryId/toggle-status',
-  adminRouteGuard,
+  // adminRouteGuard,
   catchAsync(toggleStatus)
 );
 

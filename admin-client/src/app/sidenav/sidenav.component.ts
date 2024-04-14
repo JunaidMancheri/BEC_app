@@ -31,6 +31,11 @@ export class SidenavComponent {
       route: 'categories',
       title: 'Category',
       icon: 'category'
+    },
+    {
+      route: 'amenities',
+      title: 'Amenity',
+      icon: 'menu_book'
     }
   ]
 }

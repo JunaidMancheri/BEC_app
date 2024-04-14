@@ -11,6 +11,11 @@ export const routes: Routes = [
         loadComponent:  () => import('./categoy/categoy.component').then((comp) => comp.CategoyComponent )
       },
       {
+        path: 'amenities',
+        loadComponent: () => import('./amenity/amenity.component').then(comp => comp.AmenityComponent)
+
+      },
+      {
         path: '',
         pathMatch: 'full',
         redirectTo: 'categories'

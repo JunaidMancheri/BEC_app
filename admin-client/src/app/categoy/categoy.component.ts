@@ -2,7 +2,6 @@ import { Component, OnInit, inject } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
@@ -24,7 +23,6 @@ export interface Category {
     MatTableModule,
     MatButtonModule,
     MatIconModule,
-    MatChipsModule,
     MatSlideToggleModule,
     SharedModule,
     MatDialogModule,
