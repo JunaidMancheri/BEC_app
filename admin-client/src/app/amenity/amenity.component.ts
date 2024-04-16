@@ -9,6 +9,7 @@ import { SharedModule } from '../shared/shared.module';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import { MatCardModule } from '@angular/material/card';
+import { AddAmenityFormComponent } from './add-amenity-form/add-amenity-form.component';
 
 export interface Amenity {
   _id: string;
@@ -29,15 +30,24 @@ export class AmenityComponent {
   matDialog = inject(MatDialog);
 
   displayedColumns: string[] = ['image', 'name', 'actions'];
-  dataSource: Amenity[] = [];
+  amenities: Amenity[] = [];
 
   ngOnInit(): void {
     this.http
       .get<{ data: Amenity[] }>(environment.baseUrl + '/amenities')
       .subscribe((res) => {
-        this.dataSource = res.data;
+        this.amenities = res.data;
       });
   }
 
-  openAddAmenityDialog() {}
+  openAddAmenityDialog() {
+    this.matDialog
+    .open(AddAmenityFormComponent, { panelClass: 'rounded-full' })
+    .afterClosed()
+    .subscribe((result) => {
+      console.log(result.get('image'));
+
+      this.http.post(environment.baseUrl + '/amenities', result).subscribe((result) => console.log(result));
+    });
+  }
 }
