@@ -16,6 +16,10 @@ export const routes: Routes = [
 
       },
       {
+        path: 'courses',
+        loadComponent: () => import('./course/course.component').then(comp => comp.CourseComponent) 
+      },
+      {
         path: '',
         pathMatch: 'full',
         redirectTo: 'categories'
