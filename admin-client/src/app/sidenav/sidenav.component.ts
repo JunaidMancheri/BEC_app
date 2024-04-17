@@ -41,6 +41,11 @@ export class SidenavComponent {
       route: 'courses',
       title: 'Course',
       icon: 'auto_stories'
+    },
+    {
+      route: 'banners',
+      title: 'Banner',
+      icon: 'featured_play_list'
     }
   ]
 }
