@@ -25,6 +25,10 @@ export const routes: Routes = [
 
       },
       {
+        path: 'enquiries',
+        loadComponent: () => import('./enquiry/enquiry.component').then((comp) => comp.EnquiryComponent)
+      },
+      {
         path: '',
         pathMatch: 'full',
         redirectTo: 'categories'
