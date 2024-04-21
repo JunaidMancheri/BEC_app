@@ -3,11 +3,14 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-unlisted-chip',
   template: `
-    <div
-      class="relative grid w-20 text-center  items-center whitespace-nowrap bg-red-500/25 border-red-800 rounded-full border py-1.5 px-3 font-sans text-xs text-gray-700"
+  <div class="flex gap-1 items-center">
+  <div
+      class=" bg-red-600  h-4 w-4 rounded-full  mat-elevation-z3"
     >
-      <span>unlisted</span>
-    </div>
+  </div>
+  <span class="text-red-600">Unlisted</span>
+
+  </div>
   `,
 })
 export class UnlistedChipComponent {}

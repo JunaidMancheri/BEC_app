@@ -3,11 +3,14 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-listed-chip',
   template: `
-    <div
-      class="relative grid w-20 text-center  items-center whitespace-nowrap bg-green-500/25 border-green-800 rounded-full border py-1.5 px-3 font-sans text-xs text-gray-700"
+  <div class="flex gap-1 items-center">
+  <div
+      class=" bg-green-600  h-2 w-2 rounded-full  mat-elevation-z3"
     >
-      <span>listed</span>
-    </div>
+  </div>
+  <span class="text-green-600">Listed</span>
+
+  </div>
   `,
 })
 export class ListedChipComponent {}

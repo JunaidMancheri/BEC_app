@@ -16,22 +16,26 @@ const router = Router();
 
 router.post(
   '/',
-  adminRouteGuard,
+  // adminRouteGuard,
   uploadTemporary.single('image'),
   validateInputs(createAmenityValidator),
   catchAsync(createAmenity)
 );
 
-router.get('/', adminRouteGuard, catchAsync(getAmenities));
+router.get('/', 
+// adminRouteGuard, 
+catchAsync(getAmenities));
 
 router.put(
   '/:amenityId',
-  adminRouteGuard,
+  // adminRouteGuard,
   uploadTemporary.single('image'),
   validateInputs(updateAmenityValidator),
   catchAsync(updateAmenity)
 );
 
-router.delete('/:amenityId', adminRouteGuard, catchAsync(deleteAmenity));
+router.delete('/:amenityId', 
+// adminRouteGuard, 
+catchAsync(deleteAmenity));
 
 exports.amenityRoutes = router;

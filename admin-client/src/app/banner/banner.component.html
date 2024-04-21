@@ -1,1 +1,62 @@
-<p>banner works!</p>
+<div class="px-60 pb-10">
+  <h1 class="mat-headline-4">Banners</h1>
+  <div class="  mb-2 flex justify-end ">
+    <button color="primary" (click)="openAddBannerDialog()" mat-raised-button>Add banner
+      <mat-icon>add</mat-icon></button>
+  </div>
+
+
+  @for (banner of banners; track $index) {
+  <mat-card class="mt-4">
+
+    <mat-card-content class="card-flex">
+      <img mat-card-image style="aspect-ratio: 16/9; height: 8rem;"
+        [src]="banner.imageUrl" alt="">
+      <div class="details flex-grow px-4 h-32 text-wrap truncate">
+        <div class="header flex gap-2 items-center">
+          <mat-card-title>{{banner.title}}</mat-card-title>
+          @if (banner.isActive) {
+            <app-listed-chip></app-listed-chip>
+          } @else {
+            <app-unlisted-chip></app-unlisted-chip>
+          }
+
+        </div>
+        <p class="">
+          {{banner.description}}
+        </p>
+
+        <p><span class="font-bold">Link: </span> <span class="text-blue-600">{{banner.link}}</span><p>
+      </div>
+
+      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>
+          <mat-icon>edit</mat-icon>
+          <span>Edit</span>
+        </button>
+        <button mat-menu-item>
+          @if (banner.isActive) {
+            <ng-container >
+              <mat-icon>toggle_off</mat-icon>
+              <span>Unlist</span>
+            </ng-container>
+          } @else {
+            <ng-container >
+              <mat-icon>toggle_on</mat-icon>
+              <span>List</span>
+            </ng-container>
+          }
+        </button>
+        <button mat-menu-item>
+          <mat-icon>delete</mat-icon>
+          <span>Delete</span>
+        </button>
+      </mat-menu>
+    </mat-card-content>
+  </mat-card>
+  }
+
+</div>
