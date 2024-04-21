@@ -51,6 +51,11 @@ export class SidenavComponent {
       route: 'enquiries',
       title: 'Enquiry',
       icon: 'person_search'
+    },
+    {
+      route: 'general-details',
+      title: 'General Details',
+      icon: 'info'
     }
   ]
 }
