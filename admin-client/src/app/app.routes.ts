@@ -33,6 +33,10 @@ export const routes: Routes = [
         loadComponent: () => import('./general-details/general-details.component').then((comp) => comp.GeneralDetailsComponent)
       },
       {
+        path: 'institutions',
+        loadComponent: () => import('./post/post.component').then((comp) => comp.PostComponent)
+      },
+      {
         path: '',
         pathMatch: 'full',
         redirectTo: 'categories'

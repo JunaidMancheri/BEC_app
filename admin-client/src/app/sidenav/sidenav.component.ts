@@ -56,6 +56,11 @@ export class SidenavComponent {
       route: 'general-details',
       title: 'General Details',
       icon: 'info'
+    },
+    {
+      route: 'institutions',
+      title: 'Institutions',
+      icon: 'school'
     }
   ]
 }
