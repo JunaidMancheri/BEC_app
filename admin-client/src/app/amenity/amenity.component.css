@@ -1,0 +1,7 @@
+.mat-column-actions {
+  width: 8rem;
+}
+
+:host {
+  padding-left: 10px;
+}

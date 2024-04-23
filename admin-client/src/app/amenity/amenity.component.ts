@@ -29,7 +29,7 @@ export class AmenityComponent {
   http = inject(HttpClient);
   matDialog = inject(MatDialog);
 
-  displayedColumns: string[] = ['image', 'name', 'actions'];
+  displayedColumns: string[] = ['image', 'name','actions'];
   amenities: Amenity[] = [];
 
   ngOnInit(): void {
