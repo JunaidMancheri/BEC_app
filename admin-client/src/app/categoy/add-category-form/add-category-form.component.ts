@@ -3,7 +3,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule, NgForm } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { SnackbarService } from '../../shared/snackbar.service';
 import { HttpClient } from '@angular/common/http';
 import { Category } from '../categoy.component';
@@ -18,7 +18,7 @@ import { environment } from '../../../environments/environment';
       <mat-form-field appearance="outline">
         <mat-label>Category name</mat-label>
         <input
-          ngModel
+          [ngModel]="data ? data.name : null"
           required
           name="name"
           matInput
@@ -35,7 +35,7 @@ import { environment } from '../../../environments/environment';
         type="file"
       />
       <button mat-raised-button class="mt-4" color="primary" type="submit">
-        Create
+        @if(data) { Edit } @else { Create }
       </button>
 
       <button mat-stroked-button (click)="onClose()" class="mt-4" type="button">
@@ -48,6 +48,7 @@ export class AddCategoryFormComponent {
   matDialogRef = inject(MatDialogRef);
   snackbarService = inject(SnackbarService);
   http = inject(HttpClient);
+  data = inject(MAT_DIALOG_DATA);
 
   selectedFile: null | File = null;
 
@@ -61,20 +62,38 @@ export class AddCategoryFormComponent {
   }
 
   onSubmit(form: NgForm) {
-    if (!this.selectedFile) {
-      return this.snackbarService.openSnackbar('Please select category image');
-    }
     if (form.valid) {
       const formData = new FormData();
       formData.append('name', form.value.name);
-      formData.append('image', this.selectedFile);
-
-      this.http
-        .post<{ data: Category }>(environment.baseUrl + '/categories', formData)
-        .subscribe({
-          next: (res) => this.matDialogRef.close(res.data),
-          error: (err) => this.snackbarService.openSnackbar(err.error.error.message),
-        });
+      if (this.selectedFile) formData.append('image', this.selectedFile);
+      if (this.data) {
+        this.http
+          .put<{ data: Category }>(
+            environment.baseUrl + '/categories/' + this.data.id,
+            formData
+          )
+          .subscribe({
+            next: (res) => this.matDialogRef.close(res.data),
+            error: (err) =>
+              this.snackbarService.openSnackbar(err.error.error.message),
+          });
+      } else {
+        if (!this.selectedFile) {
+          return this.snackbarService.openSnackbar(
+            'Please select category image'
+          );
+        }
+        this.http
+          .post<{ data: Category }>(
+            environment.baseUrl + '/categories',
+            formData
+          )
+          .subscribe({
+            next: (res) => this.matDialogRef.close(res.data),
+            error: (err) =>
+              this.snackbarService.openSnackbar(err.error.error.message),
+          });
+      }
     }
   }
 }
