@@ -33,7 +33,7 @@ const postSchema = new Schema({
   },
   gallery: [String],
   contactNumber: {
-    type: Number,
+    type: String,
     required: true,
   },
   brochureUrl: String,

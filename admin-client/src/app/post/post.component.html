@@ -1,1 +1,70 @@
-<p>post works!</p>
+<div class="px-20 pb-10">
+  <h1 class="mat-headline-4">Enquiries</h1>
+
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+    <ng-container matColumnDef="coverImageUrl">
+      <th mat-header-cell *matHeaderCellDef> Cover Image</th>
+      <td mat-cell *matCellDef="let element">
+        <img [src]="element.coverImageUrl" style="height: 40px; width: 40px;" alt="">
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="title">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.title}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef> Status </th>
+      <td mat-cell *matCellDef="let element"> 
+       @if (element.isActive) {
+        <app-listed-chip></app-listed-chip>
+       } @else {
+        <app-unlisted-chip></app-unlisted-chip>
+       }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="category">
+      <th mat-header-cell *matHeaderCellDef> Category </th>
+      <td mat-cell *matCellDef="let element">
+        {{element.category?.name}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="contactNumber">
+      <th mat-header-cell *matHeaderCellDef> Contact Number </th>
+      <td mat-cell *matCellDef="let element">
+     {{element.contactNumber}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="courses">
+      <th mat-header-cell *matHeaderCellDef> Courses </th>
+      <td mat-cell *matCellDef="let element">
+      {{element.courses.length}}
+      </td>
+    </ng-container>
+
+
+    <ng-container matColumnDef="amenities">
+      <th mat-header-cell *matHeaderCellDef> Amenities </th>
+      <td mat-cell *matCellDef="let element">
+     {{element.amenities.length}}
+      </td>
+    </ng-container>
+
+    
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef> </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-icon [fontSet]="'material-icons-outlined'">visibility</mat-icon>
+       </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+</div>

@@ -38,7 +38,9 @@ router.post(
   catchAsync(createPost)
 );
 
-router.get('/', adminRouteGuard, catchAsync(getAllPosts));
+router.get('/',
+//  adminRouteGuard, 
+ catchAsync(getAllPosts));
 router.get(
   '/category/:categoryId',
   populateUserDetails,
