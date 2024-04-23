@@ -13,7 +13,7 @@ const {
 } = require('../common/cloudinary.service');
 const {appConfig} = require('../config/app.config');
 const {extractFilePathFromUrl} = require('../common/utils');
-const { makeLogger } = require('../common/logger.config');
+const {makeLogger} = require('../common/logger.config');
 
 const Logger = makeLogger('Category');
 
@@ -39,7 +39,7 @@ exports.createCategoryController = async (req, res, next) => {
   }
   const filePath = join('public', 'uploads', 'categories', filename);
   await fs.promises.writeFile(filePath, req.file.buffer);
-  
+
   Logger.info('Category created ' + doc.name);
   res.json(respondSuccess(doc)).end();
 
@@ -77,6 +77,8 @@ exports.updateCategory = async (req, res, next) => {
 
   if (!doc) throw new NotFound('Category not found');
   if (req.body.name) {
+    if (req.body.name.length === 0)
+      throw new BadRequest("name shouldn't be empty");
     doc.name = req.body.name;
     doc.nameSlug = generateSlug(req.body.name);
   }
@@ -94,7 +96,7 @@ exports.updateCategory = async (req, res, next) => {
     if (req.file) {
       await fs.promises.writeFile(filePath, req.file.buffer);
     }
-     
+
     Logger.info('Category updated ' + doc._id);
     res.json(respondSuccess(doc)).end();
   } catch (error) {
@@ -127,7 +129,6 @@ exports.updateCategory = async (req, res, next) => {
 
 exports.toggleStatus = async (req, res, next) => {
   const doc = await categoryModel.findById(req.params.categoryId);
-
   if (!doc) throw new NotFound('Category not found');
   doc.isActive = !doc.isActive;
   await doc.save();
@@ -135,7 +136,7 @@ exports.toggleStatus = async (req, res, next) => {
     categoryId: doc._id,
     status: doc.isActive,
   });
-  
+
   Logger.info('Category status changed to ' + doc.isActive + ' ' + doc._id);
   res.json(respondSuccess(doc));
 };
