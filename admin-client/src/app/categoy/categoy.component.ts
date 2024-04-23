@@ -47,12 +47,11 @@ export class CategoyComponent implements OnInit {
 
   openAddCategoryDialog() {
     this.matDialog
-      .open(AddCategoryFormComponent, { panelClass: 'rounded-full' })
+      .open(AddCategoryFormComponent, { panelClass: 'rounded-full', disableClose: true })
       .afterClosed()
       .subscribe((result) => {
-        console.log(result.get('image'));
-
-        this.http.post(environment.baseUrl + '/categories', result).subscribe((result) => console.log(result));
+        if (result) this.dataSource = [...this.dataSource, result]
+                 
       });
   }
 }
