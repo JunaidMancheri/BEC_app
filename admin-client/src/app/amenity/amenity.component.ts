@@ -47,6 +47,25 @@ export class AmenityComponent {
       });
   }
 
+  editAmenity(id: string, name: string) {
+    this.matDialog
+    .open(AddAmenityFormComponent, {
+      data: { name, id },
+      disableClose: true,
+    })
+    .afterClosed()
+    .subscribe((res) => {
+      if (res) {
+        this.amenities = this.amenities.map((item) => {
+          if (item._id == res._id) {
+            return res;
+          }
+          return item;
+        });
+      }
+    });
+  }
+
   openAddAmenityDialog() {
     this.matDialog
       .open(AddAmenityFormComponent, {

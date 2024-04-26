@@ -9,25 +9,28 @@ import { SnackbarService } from '../../shared/snackbar.service';
 import { Amenity } from '../amenity.component';
 import { environment } from '../../../environments/environment';
 
-
 @Component({
   selector: 'app-add-amenity-form',
   standalone: true,
   imports: [MatFormFieldModule, MatInputModule, MatButtonModule, FormsModule],
   template: `
-        <form #form="ngForm" (ngSubmit)="onSubmit(form)" class="flex flex-col p-7 ">
-        <mat-form-field appearance="outline">
-      <mat-label>Amenity name</mat-label>
-       <input ngModel required name="name" matInput placeholder="Ex. Hostel">
-       <mat-error>name is required</mat-error>
+    <form #form="ngForm" (ngSubmit)="onSubmit(form)" class="flex flex-col p-7 ">
+      <mat-form-field appearance="outline">
+        <mat-label>Amenity name</mat-label>
+        <input
+        [ngModel]="data ? data.name : null"
+         required name="name" matInput placeholder="Ex. Hostel" />
+        <mat-error>name is required</mat-error>
       </mat-form-field>
       <label for="file" class="mb-1">Amenity image:</label>
-      <input (change)="onFileSelected($event)" name="image" type="file">
-      <button mat-raised-button class="mt-4" color="primary" type="submit" >Create</button>
+      <input (change)="onFileSelected($event)" name="image" type="file" />
+      <button mat-raised-button class="mt-4" color="primary" type="submit">
+      @if(data) { Edit } @else { Create }
+      </button>
       <button mat-stroked-button (click)="onClose()" class="mt-4" type="button">
         Cancel
       </button>
-        </form>
+    </form>
   `,
 })
 export class AddAmenityFormComponent {
@@ -70,10 +73,7 @@ export class AddAmenityFormComponent {
           );
         }
         this.http
-          .post<{ data: Amenity }>(
-            environment.baseUrl + '/amenities',
-            formData
-          )
+          .post<{ data: Amenity }>(environment.baseUrl + '/amenities', formData)
           .subscribe({
             next: (res) => this.matDialogRef.close(res.data),
             error: (err) =>

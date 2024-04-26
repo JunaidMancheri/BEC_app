@@ -67,12 +67,11 @@ export class CategoyComponent implements OnInit {
   editCategory(id: string, name: string) {
     this.matDialog
       .open(AddCategoryFormComponent, {
-        data: { name: name, id },
+        data: { name, id },
         disableClose: true,
       })
       .afterClosed()
       .subscribe((res) => {
-        console.log(res);
         if (res) {
           this.dataSource = this.dataSource.map((item) => {
             if (item._id == res._id) {
