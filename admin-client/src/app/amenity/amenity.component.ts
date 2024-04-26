@@ -20,16 +20,23 @@ export interface Amenity {
 @Component({
   selector: 'app-amenity',
   standalone: true,
-  imports: [MatTableModule, MatButtonModule, MatDialogModule, MatIconModule, MatCardModule,MatSlideToggleModule, SharedModule,],
+  imports: [
+    MatTableModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatIconModule,
+    MatCardModule,
+    MatSlideToggleModule,
+    SharedModule,
+  ],
   templateUrl: './amenity.component.html',
-  styleUrl: './amenity.component.css'
+  styleUrl: './amenity.component.css',
 })
 export class AmenityComponent {
-
   http = inject(HttpClient);
   matDialog = inject(MatDialog);
 
-  displayedColumns: string[] = ['image', 'name','actions'];
+  displayedColumns: string[] = ['image', 'name', 'actions'];
   amenities: Amenity[] = [];
 
   ngOnInit(): void {
@@ -42,12 +49,13 @@ export class AmenityComponent {
 
   openAddAmenityDialog() {
     this.matDialog
-    .open(AddAmenityFormComponent, { panelClass: 'rounded-full' })
-    .afterClosed()
-    .subscribe((result) => {
-      console.log(result.get('image'));
-
-      this.http.post(environment.baseUrl + '/amenities', result).subscribe((result) => console.log(result));
-    });
+      .open(AddAmenityFormComponent, {
+        panelClass: 'rounded-full',
+        disableClose: true,
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) this.amenities = [...this.amenities, result];
+      });
   }
 }
