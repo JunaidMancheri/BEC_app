@@ -8,7 +8,7 @@ import { Component } from '@angular/core';
       class=" bg-green-600  h-2 w-2 rounded-full  mat-elevation-z3"
     >
   </div>
-  <span class="text-green-600">Listed</span>
+  <span class="text-gray-600 text-xs">Listed</span>
 
   </div>
   `,
