@@ -10,6 +10,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import { MatCardModule } from '@angular/material/card';
 import { AddAmenityFormComponent } from './add-amenity-form/add-amenity-form.component';
+import { SnackbarService } from '../shared/snackbar.service';
 
 export interface Amenity {
   _id: string;
@@ -35,6 +36,7 @@ export interface Amenity {
 export class AmenityComponent {
   http = inject(HttpClient);
   matDialog = inject(MatDialog);
+  snackbarService = inject(SnackbarService);
 
   displayedColumns: string[] = ['image', 'name', 'actions'];
   amenities: Amenity[] = [];
@@ -47,23 +49,30 @@ export class AmenityComponent {
       });
   }
 
+  deleteAmenity(id: string) {
+    this.http.delete(environment.baseUrl + '/amenities/' + id).subscribe(() => {
+      this.amenities = this.amenities.filter((item) => item._id !== id);
+      this.snackbarService.openSnackbar('Amenity deleted successfully');
+    });
+  }
+
   editAmenity(id: string, name: string) {
     this.matDialog
-    .open(AddAmenityFormComponent, {
-      data: { name, id },
-      disableClose: true,
-    })
-    .afterClosed()
-    .subscribe((res) => {
-      if (res) {
-        this.amenities = this.amenities.map((item) => {
-          if (item._id == res._id) {
-            return res;
-          }
-          return item;
-        });
-      }
-    });
+      .open(AddAmenityFormComponent, {
+        data: { name, id },
+        disableClose: true,
+      })
+      .afterClosed()
+      .subscribe((res) => {
+        if (res) {
+          this.amenities = this.amenities.map((item) => {
+            if (item._id == res._id) {
+              return res;
+            }
+            return item;
+          });
+        }
+      });
   }
 
   openAddAmenityDialog() {
