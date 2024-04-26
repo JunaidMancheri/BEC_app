@@ -5,7 +5,8 @@ const createCourseDtoSchema = {
   properties: {
     name: {type: 'string'},
     description: {type: 'string'},
-    duration: {type: ['number', 'string']},
+    years: {type: ['number', 'string']},
+    months: {type: ['number', 'string']},
     type: {type: 'string', enum: ['postgraduate', 'undergraduate']},
   },
   required: ['name', 'description', 'duration', 'type'],
@@ -20,7 +21,8 @@ const updateCourseSchema = {
   properties: {
     name: {type: 'string'},
     description: {type: 'string'},
-    duration: {type: ['number', 'string']},
+    years: {type: ['number', 'string']},
+    months: {type: ['number', 'string']},
     type: {type: 'string', enum: ['postgraduate', 'undergraduate']},
   },
   additionalProperties: false,
