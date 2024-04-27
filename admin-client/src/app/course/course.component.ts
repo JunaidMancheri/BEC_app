@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { SnackbarService } from '../shared/snackbar.service';
+import { CourseFormComponent } from './course-form/course-form.component';
 
 export interface Course {
   _id: string;
@@ -50,13 +51,35 @@ export class CourseComponent implements OnInit {
     });
   }
 
-  openAddCategoryDialog() {
-    // this.matDialog
-    //   .open(AddCategoryFormComponent, { panelClass: 'rounded-full' })
-    //   .afterClosed()
-    //   .subscribe((result) => {
-    //     console.log(result.get('image'));
-    //     this.http.post(environment.baseUrl + '/categories', result).subscribe((result) => console.log(result));
-    //   });
+  editCourse(course: Course) {
+    this.matDialog
+      .open(CourseFormComponent, {
+        disableClose: true,
+        data: course
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) {
+          this.dataSource = this.dataSource.map((item) => {
+            if (item._id === course._id) {
+              return result;
+            }
+            return item;
+          });
+          this.snackbarService.openSnackbar('Course edited successfully');
+        }
+      });
+  }
+
+  openAddCourseDialog() {
+    this.matDialog
+      .open(CourseFormComponent, {
+        panelClass: 'rounded-full',
+        disableClose: true,
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) (this.dataSource = [...this.dataSource, result], this.snackbarService.openSnackbar('Course added successfully'));
+      });
   }
 }

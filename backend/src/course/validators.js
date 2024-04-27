@@ -9,7 +9,7 @@ const createCourseDtoSchema = {
     months: {type: ['number', 'string']},
     type: {type: 'string', enum: ['postgraduate', 'undergraduate']},
   },
-  required: ['name', 'description', 'duration', 'type'],
+  required: ['name', 'description', 'years','months', 'type'],
   additionalProperties: false,
 };
 
