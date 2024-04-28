@@ -99,6 +99,7 @@ export class BannerFormComponent {
       formData.append('link', form.value.link);
       if (this.selectedFile) formData.append('image', this.selectedFile);
       if (this.data) {
+        this.http.put<{ data: Banner }>(environment.baseUrl + '/banners/' + this.data._id, formData).subscribe((res) => this.matDialogRef.close(res.data))
       } else {
         if (!this.selectedFile)
           return this.snackbarService.openSnackbar('Banner image is required');

@@ -63,6 +63,21 @@ export class BannerComponent {
       });
   }
 
+  editBanner(banner: Banner) {
+    this.matDialog
+      .open(BannerFormComponent, { disableClose: true, data: banner })
+      .afterClosed()
+      .subscribe((res) => {
+        if (res) {
+          const updateIndex = this.banners.findIndex(
+            (item) => item._id === banner._id
+          );
+          this.banners[updateIndex] = res;
+          this.snackbarService.openSnackbar('Updated banner successfully');
+        }
+      });
+  }
+
   deleteBanner(id: string) {
     this.http.delete(environment.baseUrl + '/banners/' + id).subscribe(() => {
       this.banners = this.banners.filter((item) => item._id !== id);
