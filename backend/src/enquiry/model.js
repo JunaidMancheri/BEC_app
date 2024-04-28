@@ -32,7 +32,7 @@ const enquirySchema = new Schema({
     enum: ['general', 'specialized'],
     required: true
   }
-})
+}, {timestamps: true});
 
 
 exports.EnquiryModel = model('enquiries', enquirySchema);
