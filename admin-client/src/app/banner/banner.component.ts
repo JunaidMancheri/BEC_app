@@ -63,6 +63,13 @@ export class BannerComponent {
       });
   }
 
+  deleteBanner(id: string) {
+    this.http.delete(environment.baseUrl + '/banners/' + id).subscribe(() => {
+      this.banners = this.banners.filter((item) => item._id !== id);
+      this.snackbarService.openSnackbar('Banner deleted successfully');
+    });
+  }
+
   openAddBannerDialog() {
     this.matDialog
       .open(BannerFormComponent, { disableClose: true })
