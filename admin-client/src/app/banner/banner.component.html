@@ -34,10 +34,10 @@
       </button>
       <mat-menu #menu="matMenu">
         <button mat-menu-item>
-          <mat-icon>edit</mat-icon>
+          <mat-icon color="primary">edit</mat-icon>
           <span>Edit</span>
         </button>
-        <button mat-menu-item>
+        <button mat-menu-item (click)="toggleStatus(banner._id)">
           @if (banner.isActive) {
             <ng-container >
               <mat-icon>toggle_off</mat-icon>
@@ -45,13 +45,13 @@
             </ng-container>
           } @else {
             <ng-container >
-              <mat-icon>toggle_on</mat-icon>
+              <mat-icon color="primary">toggle_on</mat-icon>
               <span>List</span>
             </ng-container>
           }
         </button>
         <button mat-menu-item>
-          <mat-icon>delete</mat-icon>
+          <mat-icon color="warn">delete</mat-icon>
           <span>Delete</span>
         </button>
       </mat-menu>
