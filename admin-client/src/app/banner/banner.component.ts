@@ -6,6 +6,9 @@ import { MatMenuModule } from '@angular/material/menu';
 import { SharedModule } from '../shared/shared.module';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
+import { BannerFormComponent } from './banner-form/banner-form.component';
+import { SnackbarService } from '../shared/snackbar.service';
 
 export interface Banner {
   imageUrl: string;
@@ -18,14 +21,21 @@ export interface Banner {
 @Component({
   selector: 'app-banner',
   standalone: true,
-  imports: [MatCardModule, MatIconModule, MatMenuModule, MatButtonModule, SharedModule],
+  imports: [
+    MatCardModule,
+    MatIconModule,
+    MatMenuModule,
+    MatButtonModule,
+    SharedModule,
+  ],
   templateUrl: './banner.component.html',
-  styleUrl: './banner.component.css'
+  styleUrl: './banner.component.css',
 })
 export class BannerComponent {
-
-  banners: Banner[] = []
-  http = inject(HttpClient)
+  banners: Banner[] = [];
+  http = inject(HttpClient);
+  matDialog = inject(MatDialog);
+  snackbarService  = inject(SnackbarService);
 
   ngOnInit(): void {
     this.http
@@ -35,6 +45,15 @@ export class BannerComponent {
       });
   }
 
-  openAddBannerDialog() {}
-
+  openAddBannerDialog() {
+    this.matDialog
+      .open(BannerFormComponent, { disableClose: true })
+      .afterClosed()
+      .subscribe((res) => {
+        if (res) {
+          this.banners.push(res);
+          this.snackbarService.openSnackbar('Added new banner successfully');
+        }
+      });
+  }
 }
