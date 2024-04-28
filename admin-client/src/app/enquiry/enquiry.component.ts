@@ -21,12 +21,7 @@ export interface Enquiry {
 @Component({
   selector: 'app-enquiry',
   standalone: true,
-  imports: [
-    MatTableModule,
-    MatButtonModule,
-    MatIconModule,
-    MatDialogModule,
-  ],
+  imports: [MatTableModule, MatButtonModule, MatIconModule, MatDialogModule],
   templateUrl: './enquiry.component.html',
   styleUrl: './enquiry.component.css',
 })
@@ -34,7 +29,17 @@ export class EnquiryComponent implements OnInit {
   http = inject(HttpClient);
   matDialog = inject(MatDialog);
 
-  displayedColumns: string[] = [ 'name', 'email', 'phoneNo', 'city','note','type','post','course', 'actions'];
+  displayedColumns: string[] = [
+    'name',
+    'email',
+    'phoneNo',
+    'city',
+    'note',
+    'type',
+    'post',
+    'course',
+    'actions',
+  ];
   dataSource: Enquiry[] = [];
 
   ngOnInit(): void {
@@ -46,4 +51,11 @@ export class EnquiryComponent implements OnInit {
       });
   }
 
+  deleteEnquiry(id: string) {
+    this.http
+      .delete(environment.baseUrl + '/enquiries/' + id)
+      .subscribe((res) => {
+        this.dataSource = this.dataSource.filter((item) => item._id !== id);
+      });
+  }
 }
