@@ -1,6 +1,6 @@
 import {  HttpEvent, HttpHandlerFn, HttpRequest } from "@angular/common/http";
 import { inject } from "@angular/core";
-import { Observable, catchError, of, throwError } from "rxjs";
+import { EMPTY, Observable, catchError, of, throwError } from "rxjs";
 import { SnackbarService } from "./shared/snackbar.service";
 
 export  function CatchHttpErrorInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
@@ -8,7 +8,7 @@ export  function CatchHttpErrorInterceptor(req: HttpRequest<unknown>, next: Http
   return next(req).pipe(
     catchError((err) => {
       snackbarService.openSnackbar(err.error.error.message)
-      return throwError(() => err);
+      return EMPTY;
     })
   )
 }
