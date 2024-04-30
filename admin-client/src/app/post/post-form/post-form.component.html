@@ -1,0 +1,86 @@
+<form [formGroup]="form" class="flex w-[40vw] flex-col p-7">
+  <h1 class="mat-headline-5">Add institution</h1>
+  <mat-form-field appearance="outline">
+    <mat-label>Institution name</mat-label>
+    <input formControlName="title" name="name" matInput />
+    <mat-error>name is required</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Description</mat-label>
+    <textarea formControlName="description" name="description" matInput></textarea>
+    <mat-error>description is required</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Category</mat-label>
+    <input type="text" placeholder="Pick one" matInput name="category" required (input)="onCategoryInputChange($event)"
+      [matAutocomplete]="categoriesAuto" />
+    <mat-icon matSuffix>expand_more</mat-icon>
+    <mat-autocomplete requireSelection (optionSelected)="onCategorySelected($event)" #categoriesAuto="matAutocomplete"
+      [displayWith]="categoryDisplayFn">
+      @for (option of filteredCategories; track option) {
+      <mat-option [value]="option">{{ option.name }}</mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Courses</mat-label>
+    <mat-chip-grid #courseChipGrid>
+      @for (course of coursesSelected; track course) {
+        <mat-chip-row (removed)="removeCourse(course._id)">
+          {{course.name}}
+          <button matChipRemove [attr.aria-label]="'remove ' + course.name">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+      }
+    </mat-chip-grid>
+    <input 
+      [matChipInputFor]="courseChipGrid" [matAutocomplete]="courseAuto"
+      (input)="onCourseInputChange($event)"
+      placeholder="Select courses"
+
+      />
+      <mat-icon matSuffix>expand_more</mat-icon>
+    <mat-autocomplete requireSelection #courseAuto="matAutocomplete" [displayWith]="courseDisplayFn" (optionSelected)="onCourseSelected($event)">
+      @for (option of filteredCourses; track option) {
+        <mat-option [value]="option">{{option.name}}</mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Amenities</mat-label>
+    <mat-chip-grid #amenityChipGrid>
+      @for (amenity of amenitiesSelected; track amenity) {
+        <mat-chip-row (removed)="removeAmenity(amenity._id)">
+          {{amenity.name}}
+          <button matChipRemove [attr.aria-label]="'remove ' + amenity.name">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+      }
+    </mat-chip-grid>
+    <input 
+      [matChipInputFor]="amenityChipGrid" [matAutocomplete]="amenityAuto"
+      (input)="onAmenityInputChange($event)"
+      placeholder="Select amenities"
+
+      />
+      <mat-icon matSuffix>expand_more</mat-icon>
+    <mat-autocomplete requireSelection #amenityAuto="matAutocomplete" [displayWith]="amenityDisplayFn" (optionSelected)="onAmenitySelected($event)">
+      @for (option of filteredAmenities; track option) {
+        <mat-option [value]="option">{{option.name}}</mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+  <button (click)="onSubmit()" mat-raised-button class="mt-4" color="primary" type="submit">
+    Create
+  </button>
+
+  <button mat-stroked-button (click)="onClose()" class="mt-4" type="button">
+    Cancel
+  </button>
+</form>

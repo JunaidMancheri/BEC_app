@@ -9,19 +9,20 @@ import { Category } from '../categoy/categoy.component';
 import { Amenity } from '../amenity/amenity.component';
 import { Course } from '../course/course.component';
 import { SharedModule } from '../shared/shared.module';
+import { PostFormComponent } from './post-form/post-form.component';
 
 export interface Post {
   _id: string;
   coverImageUrl: string;
   title: string;
   isActive: boolean;
-  category: Category,
+  category: Category;
   isCategoryActive: boolean;
   description: string;
-  amenities: Amenity[],
-  courses: Course[],
-  gallery: string[],
-  contactNumber: string,
+  amenities: Amenity[];
+  courses: Course[];
+  gallery: string[];
+  contactNumber: string;
   brochureUrl?: string;
 }
 
@@ -33,7 +34,7 @@ export interface Post {
     MatButtonModule,
     MatIconModule,
     MatDialogModule,
-    SharedModule
+    SharedModule,
   ],
   templateUrl: './post.component.html',
   styleUrl: './post.component.css',
@@ -42,7 +43,16 @@ export class PostComponent implements OnInit {
   http = inject(HttpClient);
   matDialog = inject(MatDialog);
 
-  displayedColumns: string[] = [ 'coverImageUrl', 'title', 'status', 'category','contactNumber','courses','amenities', 'actions'];
+  displayedColumns: string[] = [
+    'coverImageUrl',
+    'title',
+    'status',
+    'category',
+    'contactNumber',
+    'courses',
+    'amenities',
+    'actions',
+  ];
   dataSource: Post[] = [];
 
   ngOnInit(): void {
@@ -54,6 +64,14 @@ export class PostComponent implements OnInit {
       });
   }
 
-  onRowClicked() {}
+  openAddInstitutionDialog() {
+    this.matDialog
+      .open(PostFormComponent, { disableClose: true })
+      .afterClosed()
+      .subscribe((res) => {
+        this.dataSource = [...this.dataSource, res];
+      });
+  }
 
+  onRowClicked() {}
 }
