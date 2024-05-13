@@ -4,12 +4,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { Category } from '../categoy/categoy.component';
 import { Amenity } from '../amenity/amenity.component';
 import { Course } from '../course/course.component';
 import { SharedModule } from '../shared/shared.module';
 import { PostFormComponent } from './post-form/post-form.component';
+import { Router, RouterModule } from '@angular/router';
 
 export interface Post {
   _id: string;
@@ -41,7 +42,7 @@ export interface Post {
 })
 export class PostComponent implements OnInit {
   http = inject(HttpClient);
-  matDialog = inject(MatDialog);
+  router = inject(Router);
 
   displayedColumns: string[] = [
     'coverImageUrl',
@@ -65,12 +66,7 @@ export class PostComponent implements OnInit {
   }
 
   openAddInstitutionDialog() {
-    this.matDialog
-      .open(PostFormComponent, { disableClose: true })
-      .afterClosed()
-      .subscribe((res) => {
-        this.dataSource = [...this.dataSource, res];
-      });
+    this.router.navigate(['institutions', 'add-institution']);
   }
 
   onRowClicked() {}

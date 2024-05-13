@@ -12,7 +12,7 @@ const router = Router();
 
 router.put(
   '/',
-  adminRouteGuard,
+  // adminRouteGuard,
   validateInputs(generalDetailsValidator),
   catchAsync(updateGeneralDetails)
 );
