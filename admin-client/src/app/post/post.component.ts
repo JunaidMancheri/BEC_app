@@ -10,7 +10,7 @@ import { Amenity } from '../amenity/amenity.component';
 import { Course } from '../course/course.component';
 import { SharedModule } from '../shared/shared.module';
 import { PostFormComponent } from './post-form/post-form.component';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 
 export interface Post {
   _id: string;
@@ -36,6 +36,7 @@ export interface Post {
     MatIconModule,
     MatDialogModule,
     SharedModule,
+    RouterLink
   ],
   templateUrl: './post.component.html',
   styleUrl: './post.component.css',
