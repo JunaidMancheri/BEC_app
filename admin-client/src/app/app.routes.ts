@@ -66,6 +66,13 @@ export const routes: Routes = [
                 (comp) => comp.PostFormComponent
               ),
           },
+          {
+            path: ':institution',
+            loadComponent: () =>
+              import('./post/single-post/single-post.component').then(
+                (comp) => comp.SinglePostComponent
+              ),
+          },
         ],
       },
       {
