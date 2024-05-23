@@ -1,4 +1,4 @@
-import {  HttpEvent, HttpHandlerFn, HttpRequest } from "@angular/common/http";
+import { HttpEvent, HttpHandlerFn, HttpRequest } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { EMPTY, Observable, catchError, of, throwError } from "rxjs";
 import { SnackbarService } from "./shared/snackbar.service";
