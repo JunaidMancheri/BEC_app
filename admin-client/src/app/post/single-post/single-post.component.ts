@@ -1,12 +1,32 @@
-import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, inject } from '@angular/core';
+import {
+  ActivatedRoute,
+  ActivatedRouteSnapshot,
+  RouterModule,
+} from '@angular/router';
+import { environment } from '../../../environments/environment';
+import { Post } from '../post.component';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-single-post',
   standalone: true,
-  imports: [],
+  imports: [RouterModule, MatCardModule],
   templateUrl: './single-post.component.html',
-  styles: ``
+  styles: ``,
 })
-export class SinglePostComponent {
+export class SinglePostComponent implements OnInit {
+  http = inject(HttpClient);
+  route = inject(ActivatedRoute);
 
+  data: Post = {} as Post;
+
+  ngOnInit(): void {
+    this.http
+      .get<{data: Post}>(environment.baseUrl + '/posts/' + this.route.snapshot.url)
+      .subscribe((res) => {
+        this.data = res.data;
+      });
+  }
 }
