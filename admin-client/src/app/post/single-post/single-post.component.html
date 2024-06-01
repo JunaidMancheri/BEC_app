@@ -11,17 +11,23 @@
         <span class="text-2xl">{{data.title}}</span>
         <app-listed-chip></app-listed-chip>
       </div>
+      <div class="details mt-4">
+        <mat-divider></mat-divider>
+        <div class="description gap-1 flex  w-[60%]">
+          <span class="w-32 font-bold ">category</span> <mat-divider vertical="true"></mat-divider> <p>{{data.category.name}}</p> <app-listed-chip></app-listed-chip>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="description gap-1 flex  w-[60%]">
+          <span class="w-32 font-bold ">contact number</span> <mat-divider vertical="true"></mat-divider> <p>{{data.contactNumber}}</p>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="description gap-1 flex  ">
+          <span class="w-32 font-bold">description</span> <mat-divider vertical="true"></mat-divider> <p  class="w-[60%]">{{data.description}}</p>
+        </div>
+        <mat-divider></mat-divider>
 
-      <mat-divider></mat-divider>
-      <div class="description gap-1 flex  w-[60%]">
-        <span class="w-32">category</span> <mat-divider vertical="true"></mat-divider> <p>{{data.category.name}}</p>
       </div>
 
-      <mat-divider></mat-divider>
-      <div class="description gap-1 flex  w-[60%]">
-        <span class="w-32">description</span> <mat-divider vertical="true"></mat-divider> <p>{{data.description}}</p>
-      </div>
-      <mat-divider></mat-divider>
       
 
     </div>
