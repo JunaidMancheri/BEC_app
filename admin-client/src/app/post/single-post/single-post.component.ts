@@ -8,11 +8,13 @@ import {
 import { environment } from '../../../environments/environment';
 import { Post } from '../post.component';
 import { MatCardModule } from '@angular/material/card';
+import { SharedModule } from '../../shared/shared.module';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'app-single-post',
   standalone: true,
-  imports: [RouterModule, MatCardModule],
+  imports: [RouterModule, MatCardModule, SharedModule, MatDividerModule],
   templateUrl: './single-post.component.html',
   styles: ``,
 })
