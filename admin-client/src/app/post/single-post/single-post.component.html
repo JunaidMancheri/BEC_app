@@ -1,11 +1,9 @@
 <div class="container p-10">
-  <div class="main-section w-full h-[40vh] flex">
-<mat-card class="p-3">
-  <div class="coverimage w-[20vw] h-full  flex items-center">
-    <img [src]="data.coverImageUrl" alt="">
-  </div>
-</mat-card>
-    <div class="details pl-6 flex-grow h-full">
+  <div class="main-section w-full max-h-[40vh] flex">
+    <div class="h-64 flex items-center justify-center w-3/12">
+      <img class="h-full w-[100%] object-fill" [src]="data.coverImageUrl" alt="">
+    </div>
+    <div class="details w-9/12  pl-6 h-full">
 
       <div class="main-heading flex gap-2 items-center">
         <span class="text-2xl">{{data.title}}</span>
@@ -13,22 +11,33 @@
       </div>
       <div class="details mt-4">
         <mat-divider></mat-divider>
-        <div class="description gap-1 flex  w-[60%]">
-          <span class="w-32 font-bold ">category</span> <mat-divider vertical="true"></mat-divider> <p>{{data.category.name}}</p> <app-listed-chip></app-listed-chip>
+        <div class="description gap-1 flex min-h-7 w-[60%]">
+          <div class="w-32 flex items-center"> <span class="font-bold ">category</span> </div> <mat-divider
+            vertical="true">
+
+          </mat-divider>
+          <div class="flex items-center gap-2"><span>{{data.category.name}}</span> <app-listed-chip></app-listed-chip>
+          </div>
         </div>
         <mat-divider></mat-divider>
-        <div class="description gap-1 flex  w-[60%]">
-          <span class="w-32 font-bold ">contact number</span> <mat-divider vertical="true"></mat-divider> <p>{{data.contactNumber}}</p>
+        <div class="description gap-1 flex min-h-7   w-[60%]">
+          <div class="w-32 flex items-center"> <span class="font-bold ">contact number</span> </div> <mat-divider
+            vertical="true"></mat-divider>
+          <div class="flex items-center"><span>{{data.contactNumber}}</span></div>
         </div>
         <mat-divider></mat-divider>
-        <div class="description gap-1 flex  ">
-          <span class="w-32 font-bold">description</span> <mat-divider vertical="true"></mat-divider> <p  class="w-[60%]">{{data.description}}</p>
+        <div class="description gap-1 flex    ">
+          <div class="w-32 flex items-center"> <span class="font-bold ">description</span> </div> <mat-divider
+            vertical="true"></mat-divider>
+            <div class="w-[80%] text-center flex pt-3 items-center hover:bg-gray-100 hover:cursor-pointer">
+              <p class="w-[60%] truncate">{{data.description}}</p> <span class="text-blue-500 text-xs underline">show more</span>
+            </div>
         </div>
         <mat-divider></mat-divider>
 
       </div>
 
-      
+
 
     </div>
   </div>

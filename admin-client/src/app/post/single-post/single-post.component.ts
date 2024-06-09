@@ -16,7 +16,8 @@ import { MatDividerModule } from '@angular/material/divider';
   standalone: true,
   imports: [RouterModule, MatCardModule, SharedModule, MatDividerModule],
   templateUrl: './single-post.component.html',
-  styles: ``,
+  styles: `
+  `,
 })
 export class SinglePostComponent implements OnInit {
   http = inject(HttpClient);
