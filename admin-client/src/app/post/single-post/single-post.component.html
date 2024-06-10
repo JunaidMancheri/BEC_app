@@ -1,10 +1,9 @@
 <div class="container p-10">
-  <div class="main-section w-full max-h-[40vh] flex">
-    <div class="h-64 flex items-center justify-center w-3/12">
+  <div class="main-section w-full max-h-[40vh] mb-10 flex">
+    <div class="h-52 flex items-center justify-center w-3/12">
       <img class="h-full w-[100%] object-fill" [src]="data.coverImageUrl" alt="">
     </div>
     <div class="details w-9/12  pl-6 h-full">
-
       <div class="main-heading flex gap-2 items-center">
         <span class="text-2xl">{{data.title}}</span>
         <app-listed-chip></app-listed-chip>
@@ -34,11 +33,28 @@
             </div>
         </div>
         <mat-divider></mat-divider>
-
       </div>
-
-
-
     </div>
+  </div>
+  
+  <mat-divider></mat-divider>
+
+  <div class="courses p-4">
+    <span class="mat-headline-5  underline">Courses</span>
+
+    <mat-accordion>
+      <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            This is the expansion title
+          </mat-panel-title>
+          <mat-panel-description>
+            This is a summary of the content
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <p>This is the primary content of the panel.</p>
+      </mat-expansion-panel>
+    </mat-accordion>
+    
   </div>
 </div>

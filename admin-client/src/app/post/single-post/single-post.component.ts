@@ -2,19 +2,18 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import {
   ActivatedRoute,
-  ActivatedRouteSnapshot,
   RouterModule,
 } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { Post } from '../post.component';
-import { MatCardModule } from '@angular/material/card';
 import { SharedModule } from '../../shared/shared.module';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-single-post',
   standalone: true,
-  imports: [RouterModule, MatCardModule, SharedModule, MatDividerModule],
+  imports: [RouterModule, SharedModule, MatDividerModule, MatExpansionModule],
   templateUrl: './single-post.component.html',
   styles: `
   `,
