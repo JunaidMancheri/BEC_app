@@ -63,7 +63,7 @@
     <span class="mat-headline-5 underline mb-5">Amenities</span>
     <div class="amenities flex flex-wrap gap-5">
       @for (amenity of data.amenities; track $index) {
-        <div class="amenity-container flex border mat-elevation-z3 gap-2 p-2 h-12 min-w-36">
+        <div class="amenity-container mat-elevation-z1 flex border gap-2 p-2 h-12 min-w-36">
           <img [src]="amenity.imageUrl" alt="">
           <span class="text-base">{{amenity.name}}</span>
         </div>
