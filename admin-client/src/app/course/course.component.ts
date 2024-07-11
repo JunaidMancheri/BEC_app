@@ -13,6 +13,9 @@ export interface Course {
   name: string;
   isActive: boolean;
   imageUrl: string;
+  description: string;
+  duration: {years: number, months: number};
+  type: string;
 }
 
 @Component({

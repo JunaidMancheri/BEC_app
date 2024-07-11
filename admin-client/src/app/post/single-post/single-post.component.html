@@ -42,19 +42,32 @@
   <div class="courses p-4">
     <span class="mat-headline-5  underline">Courses</span>
 
-    <mat-accordion>
-      <mat-expansion-panel hideToggle>
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            This is the expansion title
-          </mat-panel-title>
-          <mat-panel-description>
-            This is a summary of the content
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <p>This is the primary content of the panel.</p>
-      </mat-expansion-panel>
-    </mat-accordion>
-    
+    <mat-accordion class="mt-4">
+      @for (course of data.courses; track $index) {
+        <mat-expansion-panel hideToggle>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{course.name}}
+            </mat-panel-title>
+            <mat-panel-description>
+              {{course.type}}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          {{course.description}}
+        </mat-expansion-panel>
+      }
+    </mat-accordion>    
+  </div>
+
+  <div class="amenities p-4">
+    <span class="mat-headline-5 underline mb-5">Amenities</span>
+    <div class="amenities flex flex-wrap gap-5">
+      @for (amenity of data.amenities; track $index) {
+        <div class="amenity-container flex border mat-elevation-z3 gap-2 p-2 h-12 min-w-36">
+          <img [src]="amenity.imageUrl" alt="">
+          <span class="text-base">{{amenity.name}}</span>
+        </div>
+      }
+    </div>
   </div>
 </div>
